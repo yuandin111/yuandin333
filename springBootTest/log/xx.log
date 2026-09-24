@@ -1,0 +1,1138 @@
+2026-09-24 14:39:49  INFO c.fenglin.springboottest.SpringBootTestApplication.logStarting 53:Starting SpringBootTestApplication using Java 21.0.10 with PID 2888 (C:\Users\Administrator\Desktop\springBootTest\target\classes started by Administrator in C:\Users\Administrator\Desktop\springBootTest)
+2026-09-24 14:39:49  DEBUG c.fenglin.springboottest.SpringBootTestApplication.logStarting 54:Running with Spring Boot v3.4.5, Spring v6.2.6
+2026-09-24 14:39:49  INFO c.fenglin.springboottest.SpringBootTestApplication.logStartupProfileInfo 658:The following 1 profile is active: "dev"
+2026-09-24 14:39:49  INFO o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor.logTo 252:Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-09-24 14:39:49  INFO o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor.logTo 252:For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-09-24 14:39:50  INFO o.s.boot.web.embedded.tomcat.TomcatWebServer.initialize 111:Tomcat initialized with port 62842 (http)
+2026-09-24 14:39:50  INFO org.apache.catalina.core.StandardService.log 168:Starting service [Tomcat]
+2026-09-24 14:39:50  INFO org.apache.catalina.core.StandardEngine.log 168:Starting Servlet engine: [Apache Tomcat/10.1.40]
+2026-09-24 14:39:50  INFO o.a.c.c.ContainerBase.[Tomcat].[localhost].[/api].log 168:Initializing Spring embedded WebApplicationContext
+2026-09-24 14:39:50  INFO o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext 301:Root WebApplicationContext: initialization completed in 1158 ms
+2026-09-24 14:39:50  WARN o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext.refresh 635:Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'authController' defined in file [C:\Users\Administrator\Desktop\springBootTest\target\classes\com\fenglin\springboottest\controller\AuthController.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'userServiceImpl': Unsatisfied dependency expressed through field 'baseMapper': Error creating bean with name 'userMapper' defined in file [C:\Users\Administrator\Desktop\springBootTest\target\classes\com\fenglin\springboottest\mapper\UserMapper.class]: Unsatisfied dependency expressed through bean property 'sqlSessionFactory': Error creating bean with name 'com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration': Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'mybatis-plus-com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties': Could not bind properties to 'MybatisPlusProperties' : prefix=mybatis-plus, ignoreInvalidFields=false, ignoreUnknownFields=true
+2026-09-24 14:39:50  INFO org.apache.catalina.core.StandardService.log 168:Stopping service [Tomcat]
+2026-09-24 14:39:50  INFO o.s.b.a.logging.ConditionEvaluationReportLogger.logMessage 82:
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-09-24 14:39:50  ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter.report 40:
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to bind properties under 'mybatis-plus.configuration.log-impl' to java.lang.Class<org.apache.ibatis.logging.Log>:
+
+    Property: mybatis-plus.configuration.log-impl
+    Value: "org.apache.ibatis.logging.slf4j.Slf4jLogImpl"
+    Origin: class path resource [application-dev.properties] - 17:37
+    Reason: failed to convert java.lang.String to java.lang.Class<org.apache.ibatis.logging.Log> (caused by java.lang.ClassNotFoundException: org.apache.ibatis.logging.slf4j.Slf4jLogImpl)
+
+Action:
+
+Update your application's configuration
+
+2026-09-24 14:40:29  INFO c.fenglin.springboottest.SpringBootTestApplication.logStarting 53:Starting SpringBootTestApplication using Java 21.0.10 with PID 10412 (C:\Users\Administrator\Desktop\springBootTest\target\classes started by Administrator in C:\Users\Administrator\Desktop\springBootTest)
+2026-09-24 14:40:29  DEBUG c.fenglin.springboottest.SpringBootTestApplication.logStarting 54:Running with Spring Boot v3.4.5, Spring v6.2.6
+2026-09-24 14:40:29  INFO c.fenglin.springboottest.SpringBootTestApplication.logStartupProfileInfo 658:The following 1 profile is active: "dev"
+2026-09-24 14:40:29  INFO o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor.logTo 252:Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-09-24 14:40:29  INFO o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor.logTo 252:For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-09-24 14:40:30  INFO o.s.boot.web.embedded.tomcat.TomcatWebServer.initialize 111:Tomcat initialized with port 62842 (http)
+2026-09-24 14:40:30  INFO org.apache.catalina.core.StandardService.log 168:Starting service [Tomcat]
+2026-09-24 14:40:30  INFO org.apache.catalina.core.StandardEngine.log 168:Starting Servlet engine: [Apache Tomcat/10.1.40]
+2026-09-24 14:40:30  INFO o.a.c.c.ContainerBase.[Tomcat].[localhost].[/api].log 168:Initializing Spring embedded WebApplicationContext
+2026-09-24 14:40:30  INFO o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext 301:Root WebApplicationContext: initialization completed in 1034 ms
+2026-09-24 14:40:31  INFO o.s.b.a.web.servlet.WelcomePageHandlerMapping.<init> 59:Adding welcome page: class path resource [static/index.html]
+2026-09-24 14:40:31  INFO o.s.b.d.autoconfigure.OptionalLiveReloadServer.startServer 59:LiveReload server is running on port 35729
+2026-09-24 14:40:31  WARN o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext.refresh 635:Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-09-24 14:40:31  INFO o.s.b.a.logging.ConditionEvaluationReportLogger.logMessage 82:
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-09-24 14:40:31  ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter.report 40:
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 62842 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 62842 or configure this application to listen on another port.
+
+2026-09-24 14:42:14  INFO c.fenglin.springboottest.SpringBootTestApplication.logStarting 53:Starting SpringBootTestApplication using Java 21.0.10 with PID 10404 (C:\Users\Administrator\Desktop\springBootTest\target\classes started by Administrator in C:\Users\Administrator\Desktop\springBootTest)
+2026-09-24 14:42:14  DEBUG c.fenglin.springboottest.SpringBootTestApplication.logStarting 54:Running with Spring Boot v3.4.5, Spring v6.2.6
+2026-09-24 14:42:14  INFO c.fenglin.springboottest.SpringBootTestApplication.logStartupProfileInfo 658:The following 1 profile is active: "dev"
+2026-09-24 14:42:14  INFO o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor.logTo 252:Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-09-24 14:42:14  INFO o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor.logTo 252:For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-09-24 14:42:15  INFO o.s.boot.web.embedded.tomcat.TomcatWebServer.initialize 111:Tomcat initialized with port 8081 (http)
+2026-09-24 14:42:15  INFO org.apache.catalina.core.StandardService.log 168:Starting service [Tomcat]
+2026-09-24 14:42:15  INFO org.apache.catalina.core.StandardEngine.log 168:Starting Servlet engine: [Apache Tomcat/10.1.40]
+2026-09-24 14:42:15  INFO o.a.c.c.ContainerBase.[Tomcat].[localhost].[/api].log 168:Initializing Spring embedded WebApplicationContext
+2026-09-24 14:42:15  INFO o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext 301:Root WebApplicationContext: initialization completed in 1097 ms
+2026-09-24 14:42:15  INFO o.s.b.a.web.servlet.WelcomePageHandlerMapping.<init> 59:Adding welcome page: class path resource [static/index.html]
+2026-09-24 14:42:16  INFO o.s.b.d.autoconfigure.OptionalLiveReloadServer.startServer 59:LiveReload server is running on port 35729
+2026-09-24 14:42:16  INFO o.s.boot.web.embedded.tomcat.TomcatWebServer.start 243:Tomcat started on port 8081 (http) with context path '/api'
+2026-09-24 14:42:16  INFO c.fenglin.springboottest.SpringBootTestApplication.logStarted 59:Started SpringBootTestApplication in 2.185 seconds (process running for 2.517)
+2026-09-24 14:42:59  INFO o.a.c.c.ContainerBase.[Tomcat].[localhost].[/api].log 168:Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-24 14:42:59  INFO org.springframework.web.servlet.DispatcherServlet.initServletBean 532:Initializing Servlet 'dispatcherServlet'
+2026-09-24 14:42:59  INFO org.springframework.web.servlet.DispatcherServlet.initServletBean 554:Completed initialization in 1 ms
+2026-09-24 14:42:59  INFO com.zaxxer.hikari.HikariDataSource.getConnection 109:HikariPool-1 - Starting...
+2026-09-24 14:43:00  ERROR c.f.springboottest.common.GlobalExceptionHandler.handleException 43:系统异常
+org.mybatis.spring.MyBatisSystemException: 
+### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)
+### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectCount
+### The error occurred while executing a query
+### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.mybatis.spring.MyBatisExceptionTranslator.translateExceptionIfPossible(MyBatisExceptionTranslator.java:99)
+	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:347)
+	at jdk.proxy2/jdk.proxy2.$Proxy74.selectOne(Unknown Source)
+	at org.mybatis.spring.SqlSessionTemplate.selectOne(SqlSessionTemplate.java:154)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.execute(MybatisMapperMethod.java:87)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$PlainMethodInvoker.invoke(MybatisMapperProxy.java:152)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89)
+	at jdk.proxy3/jdk.proxy3.$Proxy77.selectCount(Unknown Source)
+	at com.fenglin.springboottest.service.impl.UserServiceImpl.register(UserServiceImpl.java:38)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:724)
+	at com.fenglin.springboottest.service.impl.UserServiceImpl$$SpringCGLIB$$0.register(<generated>)
+	at com.fenglin.springboottest.controller.AuthController.register(AuthController.java:46)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: org.apache.ibatis.exceptions.PersistenceException: 
+### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)
+### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectCount
+### The error occurred while executing a query
+### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.apache.ibatis.exceptions.ExceptionFactory.wrapException(ExceptionFactory.java:30)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:156)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:147)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:142)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectOne(DefaultSqlSession.java:75)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:333)
+	... 61 common frames omitted
+Caused by: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:84)
+	at org.mybatis.spring.transaction.SpringManagedTransaction.openConnection(SpringManagedTransaction.java:77)
+	at org.mybatis.spring.transaction.SpringManagedTransaction.getConnection(SpringManagedTransaction.java:64)
+	at org.apache.ibatis.executor.BaseExecutor.getConnection(BaseExecutor.java:348)
+	at org.apache.ibatis.executor.SimpleExecutor.prepareStatement(SimpleExecutor.java:89)
+	at org.apache.ibatis.executor.SimpleExecutor.doQuery(SimpleExecutor.java:64)
+	at org.apache.ibatis.executor.BaseExecutor.queryFromDatabase(BaseExecutor.java:336)
+	at org.apache.ibatis.executor.BaseExecutor.query(BaseExecutor.java:158)
+	at org.apache.ibatis.executor.CachingExecutor.query(CachingExecutor.java:110)
+	at com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor.intercept(MybatisPlusInterceptor.java:81)
+	at org.apache.ibatis.plugin.Plugin.invoke(Plugin.java:59)
+	at jdk.proxy2/jdk.proxy2.$Proxy90.query(Unknown Source)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:154)
+	... 67 common frames omitted
+Caused by: java.sql.SQLException: Unsupported character encoding 'utf8mb4'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:89)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:81)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:55)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:65)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:77)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:360)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:238)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:180)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:137)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:360)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:202)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:461)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:550)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:98)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at org.springframework.jdbc.datasource.DataSourceUtils.fetchConnection(DataSourceUtils.java:160)
+	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:118)
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:81)
+	... 79 common frames omitted
+Caused by: com.mysql.cj.exceptions.WrongArgumentException: Unsupported character encoding 'utf8mb4'
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:52)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:95)
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:228)
+	at com.mysql.cj.jdbc.JdbcPropertySetImpl.postInitialization(JdbcPropertySetImpl.java:56)
+	at com.mysql.cj.conf.DefaultPropertySet.initializeProperties(DefaultPropertySet.java:223)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:353)
+	... 91 common frames omitted
+Caused by: java.io.UnsupportedEncodingException: utf8mb4
+	at java.base/java.lang.String.lookupCharset(String.java:850)
+	at java.base/java.lang.String.getBytes(String.java:1784)
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:226)
+	... 94 common frames omitted
+2026-09-24 14:43:00  WARN o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.logException 254:Resolved [org.mybatis.spring.MyBatisSystemException: <EOL><EOL>### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection<EOL><EOL>### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)<EOL><EOL>### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectCount<EOL><EOL>### The error occurred while executing a query<EOL><EOL>### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection]
+2026-09-24 14:43:01  INFO com.zaxxer.hikari.HikariDataSource.getConnection 109:HikariPool-1 - Starting...
+2026-09-24 14:43:02  ERROR c.f.springboottest.common.GlobalExceptionHandler.handleException 43:系统异常
+org.mybatis.spring.MyBatisSystemException: 
+### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)
+### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectCount
+### The error occurred while executing a query
+### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.mybatis.spring.MyBatisExceptionTranslator.translateExceptionIfPossible(MyBatisExceptionTranslator.java:99)
+	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:347)
+	at jdk.proxy2/jdk.proxy2.$Proxy74.selectOne(Unknown Source)
+	at org.mybatis.spring.SqlSessionTemplate.selectOne(SqlSessionTemplate.java:154)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.execute(MybatisMapperMethod.java:87)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$PlainMethodInvoker.invoke(MybatisMapperProxy.java:152)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89)
+	at jdk.proxy3/jdk.proxy3.$Proxy77.selectCount(Unknown Source)
+	at com.fenglin.springboottest.service.impl.UserServiceImpl.register(UserServiceImpl.java:38)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:724)
+	at com.fenglin.springboottest.service.impl.UserServiceImpl$$SpringCGLIB$$0.register(<generated>)
+	at com.fenglin.springboottest.controller.AuthController.register(AuthController.java:46)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: org.apache.ibatis.exceptions.PersistenceException: 
+### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)
+### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectCount
+### The error occurred while executing a query
+### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.apache.ibatis.exceptions.ExceptionFactory.wrapException(ExceptionFactory.java:30)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:156)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:147)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:142)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectOne(DefaultSqlSession.java:75)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:333)
+	... 61 common frames omitted
+Caused by: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:84)
+	at org.mybatis.spring.transaction.SpringManagedTransaction.openConnection(SpringManagedTransaction.java:77)
+	at org.mybatis.spring.transaction.SpringManagedTransaction.getConnection(SpringManagedTransaction.java:64)
+	at org.apache.ibatis.executor.BaseExecutor.getConnection(BaseExecutor.java:348)
+	at org.apache.ibatis.executor.SimpleExecutor.prepareStatement(SimpleExecutor.java:89)
+	at org.apache.ibatis.executor.SimpleExecutor.doQuery(SimpleExecutor.java:64)
+	at org.apache.ibatis.executor.BaseExecutor.queryFromDatabase(BaseExecutor.java:336)
+	at org.apache.ibatis.executor.BaseExecutor.query(BaseExecutor.java:158)
+	at org.apache.ibatis.executor.CachingExecutor.query(CachingExecutor.java:110)
+	at com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor.intercept(MybatisPlusInterceptor.java:81)
+	at org.apache.ibatis.plugin.Plugin.invoke(Plugin.java:59)
+	at jdk.proxy2/jdk.proxy2.$Proxy90.query(Unknown Source)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:154)
+	... 67 common frames omitted
+Caused by: java.sql.SQLException: Unsupported character encoding 'utf8mb4'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:89)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:81)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:55)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:65)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:77)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:360)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:238)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:180)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:137)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:360)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:202)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:461)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:550)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:98)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at org.springframework.jdbc.datasource.DataSourceUtils.fetchConnection(DataSourceUtils.java:160)
+	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:118)
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:81)
+	... 79 common frames omitted
+Caused by: com.mysql.cj.exceptions.WrongArgumentException: Unsupported character encoding 'utf8mb4'
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:52)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:95)
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:228)
+	at com.mysql.cj.jdbc.JdbcPropertySetImpl.postInitialization(JdbcPropertySetImpl.java:56)
+	at com.mysql.cj.conf.DefaultPropertySet.initializeProperties(DefaultPropertySet.java:223)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:353)
+	... 91 common frames omitted
+Caused by: java.io.UnsupportedEncodingException: utf8mb4
+	at java.base/java.lang.String.lookupCharset(String.java:850)
+	at java.base/java.lang.String.getBytes(String.java:1784)
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:226)
+	... 94 common frames omitted
+2026-09-24 14:43:02  WARN o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.logException 254:Resolved [org.mybatis.spring.MyBatisSystemException: <EOL><EOL>### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection<EOL><EOL>### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)<EOL><EOL>### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectCount<EOL><EOL>### The error occurred while executing a query<EOL><EOL>### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection]
+2026-09-24 14:43:02  INFO com.zaxxer.hikari.HikariDataSource.getConnection 109:HikariPool-1 - Starting...
+2026-09-24 14:43:03  ERROR c.f.springboottest.common.GlobalExceptionHandler.handleException 43:系统异常
+org.mybatis.spring.MyBatisSystemException: 
+### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)
+### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectCount
+### The error occurred while executing a query
+### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.mybatis.spring.MyBatisExceptionTranslator.translateExceptionIfPossible(MyBatisExceptionTranslator.java:99)
+	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:347)
+	at jdk.proxy2/jdk.proxy2.$Proxy74.selectOne(Unknown Source)
+	at org.mybatis.spring.SqlSessionTemplate.selectOne(SqlSessionTemplate.java:154)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.execute(MybatisMapperMethod.java:87)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$PlainMethodInvoker.invoke(MybatisMapperProxy.java:152)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89)
+	at jdk.proxy3/jdk.proxy3.$Proxy77.selectCount(Unknown Source)
+	at com.fenglin.springboottest.service.impl.UserServiceImpl.register(UserServiceImpl.java:38)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:724)
+	at com.fenglin.springboottest.service.impl.UserServiceImpl$$SpringCGLIB$$0.register(<generated>)
+	at com.fenglin.springboottest.controller.AuthController.register(AuthController.java:46)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: org.apache.ibatis.exceptions.PersistenceException: 
+### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)
+### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectCount
+### The error occurred while executing a query
+### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.apache.ibatis.exceptions.ExceptionFactory.wrapException(ExceptionFactory.java:30)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:156)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:147)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:142)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectOne(DefaultSqlSession.java:75)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:333)
+	... 61 common frames omitted
+Caused by: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:84)
+	at org.mybatis.spring.transaction.SpringManagedTransaction.openConnection(SpringManagedTransaction.java:77)
+	at org.mybatis.spring.transaction.SpringManagedTransaction.getConnection(SpringManagedTransaction.java:64)
+	at org.apache.ibatis.executor.BaseExecutor.getConnection(BaseExecutor.java:348)
+	at org.apache.ibatis.executor.SimpleExecutor.prepareStatement(SimpleExecutor.java:89)
+	at org.apache.ibatis.executor.SimpleExecutor.doQuery(SimpleExecutor.java:64)
+	at org.apache.ibatis.executor.BaseExecutor.queryFromDatabase(BaseExecutor.java:336)
+	at org.apache.ibatis.executor.BaseExecutor.query(BaseExecutor.java:158)
+	at org.apache.ibatis.executor.CachingExecutor.query(CachingExecutor.java:110)
+	at com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor.intercept(MybatisPlusInterceptor.java:81)
+	at org.apache.ibatis.plugin.Plugin.invoke(Plugin.java:59)
+	at jdk.proxy2/jdk.proxy2.$Proxy90.query(Unknown Source)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:154)
+	... 67 common frames omitted
+Caused by: java.sql.SQLException: Unsupported character encoding 'utf8mb4'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:89)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:81)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:55)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:65)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:77)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:360)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:238)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:180)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:137)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:360)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:202)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:461)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:550)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:98)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at org.springframework.jdbc.datasource.DataSourceUtils.fetchConnection(DataSourceUtils.java:160)
+	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:118)
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:81)
+	... 79 common frames omitted
+Caused by: com.mysql.cj.exceptions.WrongArgumentException: Unsupported character encoding 'utf8mb4'
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:52)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:95)
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:228)
+	at com.mysql.cj.jdbc.JdbcPropertySetImpl.postInitialization(JdbcPropertySetImpl.java:56)
+	at com.mysql.cj.conf.DefaultPropertySet.initializeProperties(DefaultPropertySet.java:223)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:353)
+	... 91 common frames omitted
+Caused by: java.io.UnsupportedEncodingException: utf8mb4
+	at java.base/java.lang.String.lookupCharset(String.java:850)
+	at java.base/java.lang.String.getBytes(String.java:1784)
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:226)
+	... 94 common frames omitted
+2026-09-24 14:43:03  WARN o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.logException 254:Resolved [org.mybatis.spring.MyBatisSystemException: <EOL><EOL>### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection<EOL><EOL>### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)<EOL><EOL>### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectCount<EOL><EOL>### The error occurred while executing a query<EOL><EOL>### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection]
+2026-09-24 14:43:03  WARN o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.logException 254:Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public com.fenglin.springboottest.common.AuthResponse com.fenglin.springboottest.controller.AuthController.register(com.fenglin.springboottest.dto.RegisterRequest): [Field error in object 'registerRequest' on field 'email': rejected value [not-an-email]; codes [Email.registerRequest.email,Email.email,Email.java.lang.String,Email]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [registerRequest.email,email]; arguments []; default message [email],[Ljakarta.validation.constraints.Pattern$Flag;@53417c39,.*]; default message [请输入有效的邮箱地址]] ]
+2026-09-24 14:43:03  WARN o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.logException 254:Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public com.fenglin.springboottest.common.AuthResponse com.fenglin.springboottest.controller.AuthController.register(com.fenglin.springboottest.dto.RegisterRequest): [Field error in object 'registerRequest' on field 'password': rejected value [123]; codes [Size.registerRequest.password,Size.password,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [registerRequest.password,password]; arguments []; default message [password],32,6]; default message [密码长度需为 6-32 位]] ]
+2026-09-24 14:43:03  INFO com.zaxxer.hikari.HikariDataSource.getConnection 109:HikariPool-1 - Starting...
+2026-09-24 14:43:04  ERROR c.f.springboottest.common.GlobalExceptionHandler.handleException 43:系统异常
+org.mybatis.spring.MyBatisSystemException: 
+### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)
+### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectList
+### The error occurred while executing a query
+### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.mybatis.spring.MyBatisExceptionTranslator.translateExceptionIfPossible(MyBatisExceptionTranslator.java:99)
+	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:347)
+	at jdk.proxy2/jdk.proxy2.$Proxy74.selectList(Unknown Source)
+	at org.mybatis.spring.SqlSessionTemplate.selectList(SqlSessionTemplate.java:194)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.executeForMany(MybatisMapperMethod.java:164)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.execute(MybatisMapperMethod.java:77)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$PlainMethodInvoker.invoke(MybatisMapperProxy.java:152)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89)
+	at jdk.proxy3/jdk.proxy3.$Proxy77.selectList(Unknown Source)
+	at com.baomidou.mybatisplus.core.mapper.BaseMapper.selectOne(BaseMapper.java:332)
+	at java.base/java.lang.invoke.MethodHandle.invokeWithArguments(MethodHandle.java:733)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$DefaultMethodInvoker.invoke(MybatisMapperProxy.java:166)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89)
+	at jdk.proxy3/jdk.proxy3.$Proxy77.selectOne(Unknown Source)
+	at com.baomidou.mybatisplus.core.mapper.BaseMapper.selectOne(BaseMapper.java:321)
+	at java.base/java.lang.invoke.MethodHandle.invokeWithArguments(MethodHandle.java:733)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$DefaultMethodInvoker.invoke(MybatisMapperProxy.java:166)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89)
+	at jdk.proxy3/jdk.proxy3.$Proxy77.selectOne(Unknown Source)
+	at com.fenglin.springboottest.service.impl.UserServiceImpl.login(UserServiceImpl.java:72)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:724)
+	at com.fenglin.springboottest.service.impl.UserServiceImpl$$SpringCGLIB$$0.login(<generated>)
+	at com.fenglin.springboottest.controller.AuthController.login(AuthController.java:59)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: org.apache.ibatis.exceptions.PersistenceException: 
+### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)
+### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectList
+### The error occurred while executing a query
+### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.apache.ibatis.exceptions.ExceptionFactory.wrapException(ExceptionFactory.java:30)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:156)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:147)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:142)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:333)
+	... 72 common frames omitted
+Caused by: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:84)
+	at org.mybatis.spring.transaction.SpringManagedTransaction.openConnection(SpringManagedTransaction.java:77)
+	at org.mybatis.spring.transaction.SpringManagedTransaction.getConnection(SpringManagedTransaction.java:64)
+	at org.apache.ibatis.executor.BaseExecutor.getConnection(BaseExecutor.java:348)
+	at org.apache.ibatis.executor.SimpleExecutor.prepareStatement(SimpleExecutor.java:89)
+	at org.apache.ibatis.executor.SimpleExecutor.doQuery(SimpleExecutor.java:64)
+	at org.apache.ibatis.executor.BaseExecutor.queryFromDatabase(BaseExecutor.java:336)
+	at org.apache.ibatis.executor.BaseExecutor.query(BaseExecutor.java:158)
+	at org.apache.ibatis.executor.CachingExecutor.query(CachingExecutor.java:110)
+	at com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor.intercept(MybatisPlusInterceptor.java:81)
+	at org.apache.ibatis.plugin.Plugin.invoke(Plugin.java:59)
+	at jdk.proxy2/jdk.proxy2.$Proxy90.query(Unknown Source)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:154)
+	... 77 common frames omitted
+Caused by: java.sql.SQLException: Unsupported character encoding 'utf8mb4'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:89)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:81)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:55)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:65)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:77)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:360)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:238)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:180)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:137)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:360)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:202)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:461)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:550)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:98)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at org.springframework.jdbc.datasource.DataSourceUtils.fetchConnection(DataSourceUtils.java:160)
+	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:118)
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:81)
+	... 89 common frames omitted
+Caused by: com.mysql.cj.exceptions.WrongArgumentException: Unsupported character encoding 'utf8mb4'
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:52)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:95)
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:228)
+	at com.mysql.cj.jdbc.JdbcPropertySetImpl.postInitialization(JdbcPropertySetImpl.java:56)
+	at com.mysql.cj.conf.DefaultPropertySet.initializeProperties(DefaultPropertySet.java:223)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:353)
+	... 101 common frames omitted
+Caused by: java.io.UnsupportedEncodingException: utf8mb4
+	at java.base/java.lang.String.lookupCharset(String.java:850)
+	at java.base/java.lang.String.getBytes(String.java:1784)
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:226)
+	... 104 common frames omitted
+2026-09-24 14:43:04  WARN o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.logException 254:Resolved [org.mybatis.spring.MyBatisSystemException: <EOL><EOL>### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection<EOL><EOL>### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)<EOL><EOL>### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectList<EOL><EOL>### The error occurred while executing a query<EOL><EOL>### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection]
+2026-09-24 14:43:04  INFO com.zaxxer.hikari.HikariDataSource.getConnection 109:HikariPool-1 - Starting...
+2026-09-24 14:43:05  ERROR c.f.springboottest.common.GlobalExceptionHandler.handleException 43:系统异常
+org.mybatis.spring.MyBatisSystemException: 
+### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)
+### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectList
+### The error occurred while executing a query
+### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.mybatis.spring.MyBatisExceptionTranslator.translateExceptionIfPossible(MyBatisExceptionTranslator.java:99)
+	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:347)
+	at jdk.proxy2/jdk.proxy2.$Proxy74.selectList(Unknown Source)
+	at org.mybatis.spring.SqlSessionTemplate.selectList(SqlSessionTemplate.java:194)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.executeForMany(MybatisMapperMethod.java:164)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.execute(MybatisMapperMethod.java:77)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$PlainMethodInvoker.invoke(MybatisMapperProxy.java:152)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89)
+	at jdk.proxy3/jdk.proxy3.$Proxy77.selectList(Unknown Source)
+	at com.baomidou.mybatisplus.core.mapper.BaseMapper.selectOne(BaseMapper.java:332)
+	at java.base/java.lang.invoke.MethodHandle.invokeWithArguments(MethodHandle.java:733)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$DefaultMethodInvoker.invoke(MybatisMapperProxy.java:166)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89)
+	at jdk.proxy3/jdk.proxy3.$Proxy77.selectOne(Unknown Source)
+	at com.baomidou.mybatisplus.core.mapper.BaseMapper.selectOne(BaseMapper.java:321)
+	at java.base/java.lang.invoke.MethodHandle.invokeWithArguments(MethodHandle.java:733)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$DefaultMethodInvoker.invoke(MybatisMapperProxy.java:166)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89)
+	at jdk.proxy3/jdk.proxy3.$Proxy77.selectOne(Unknown Source)
+	at com.fenglin.springboottest.service.impl.UserServiceImpl.login(UserServiceImpl.java:72)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:724)
+	at com.fenglin.springboottest.service.impl.UserServiceImpl$$SpringCGLIB$$0.login(<generated>)
+	at com.fenglin.springboottest.controller.AuthController.login(AuthController.java:59)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: org.apache.ibatis.exceptions.PersistenceException: 
+### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)
+### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectList
+### The error occurred while executing a query
+### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.apache.ibatis.exceptions.ExceptionFactory.wrapException(ExceptionFactory.java:30)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:156)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:147)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:142)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:333)
+	... 72 common frames omitted
+Caused by: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:84)
+	at org.mybatis.spring.transaction.SpringManagedTransaction.openConnection(SpringManagedTransaction.java:77)
+	at org.mybatis.spring.transaction.SpringManagedTransaction.getConnection(SpringManagedTransaction.java:64)
+	at org.apache.ibatis.executor.BaseExecutor.getConnection(BaseExecutor.java:348)
+	at org.apache.ibatis.executor.SimpleExecutor.prepareStatement(SimpleExecutor.java:89)
+	at org.apache.ibatis.executor.SimpleExecutor.doQuery(SimpleExecutor.java:64)
+	at org.apache.ibatis.executor.BaseExecutor.queryFromDatabase(BaseExecutor.java:336)
+	at org.apache.ibatis.executor.BaseExecutor.query(BaseExecutor.java:158)
+	at org.apache.ibatis.executor.CachingExecutor.query(CachingExecutor.java:110)
+	at com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor.intercept(MybatisPlusInterceptor.java:81)
+	at org.apache.ibatis.plugin.Plugin.invoke(Plugin.java:59)
+	at jdk.proxy2/jdk.proxy2.$Proxy90.query(Unknown Source)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:154)
+	... 77 common frames omitted
+Caused by: java.sql.SQLException: Unsupported character encoding 'utf8mb4'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:89)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:81)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:55)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:65)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:77)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:360)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:238)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:180)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:137)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:360)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:202)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:461)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:550)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:98)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at org.springframework.jdbc.datasource.DataSourceUtils.fetchConnection(DataSourceUtils.java:160)
+	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:118)
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:81)
+	... 89 common frames omitted
+Caused by: com.mysql.cj.exceptions.WrongArgumentException: Unsupported character encoding 'utf8mb4'
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:52)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:95)
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:228)
+	at com.mysql.cj.jdbc.JdbcPropertySetImpl.postInitialization(JdbcPropertySetImpl.java:56)
+	at com.mysql.cj.conf.DefaultPropertySet.initializeProperties(DefaultPropertySet.java:223)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:353)
+	... 101 common frames omitted
+Caused by: java.io.UnsupportedEncodingException: utf8mb4
+	at java.base/java.lang.String.lookupCharset(String.java:850)
+	at java.base/java.lang.String.getBytes(String.java:1784)
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:226)
+	... 104 common frames omitted
+2026-09-24 14:43:05  WARN o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.logException 254:Resolved [org.mybatis.spring.MyBatisSystemException: <EOL><EOL>### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection<EOL><EOL>### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)<EOL><EOL>### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectList<EOL><EOL>### The error occurred while executing a query<EOL><EOL>### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection]
+2026-09-24 14:43:05  INFO com.zaxxer.hikari.HikariDataSource.getConnection 109:HikariPool-1 - Starting...
+2026-09-24 14:43:06  ERROR c.f.springboottest.common.GlobalExceptionHandler.handleException 43:系统异常
+org.mybatis.spring.MyBatisSystemException: 
+### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)
+### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectList
+### The error occurred while executing a query
+### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.mybatis.spring.MyBatisExceptionTranslator.translateExceptionIfPossible(MyBatisExceptionTranslator.java:99)
+	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:347)
+	at jdk.proxy2/jdk.proxy2.$Proxy74.selectList(Unknown Source)
+	at org.mybatis.spring.SqlSessionTemplate.selectList(SqlSessionTemplate.java:194)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.executeForMany(MybatisMapperMethod.java:164)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.execute(MybatisMapperMethod.java:77)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$PlainMethodInvoker.invoke(MybatisMapperProxy.java:152)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89)
+	at jdk.proxy3/jdk.proxy3.$Proxy77.selectList(Unknown Source)
+	at com.baomidou.mybatisplus.core.mapper.BaseMapper.selectOne(BaseMapper.java:332)
+	at java.base/java.lang.invoke.MethodHandle.invokeWithArguments(MethodHandle.java:733)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$DefaultMethodInvoker.invoke(MybatisMapperProxy.java:166)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89)
+	at jdk.proxy3/jdk.proxy3.$Proxy77.selectOne(Unknown Source)
+	at com.baomidou.mybatisplus.core.mapper.BaseMapper.selectOne(BaseMapper.java:321)
+	at java.base/java.lang.invoke.MethodHandle.invokeWithArguments(MethodHandle.java:733)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$DefaultMethodInvoker.invoke(MybatisMapperProxy.java:166)
+	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89)
+	at jdk.proxy3/jdk.proxy3.$Proxy77.selectOne(Unknown Source)
+	at com.fenglin.springboottest.service.impl.UserServiceImpl.login(UserServiceImpl.java:72)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:724)
+	at com.fenglin.springboottest.service.impl.UserServiceImpl$$SpringCGLIB$$0.login(<generated>)
+	at com.fenglin.springboottest.controller.AuthController.login(AuthController.java:59)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: org.apache.ibatis.exceptions.PersistenceException: 
+### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)
+### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectList
+### The error occurred while executing a query
+### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.apache.ibatis.exceptions.ExceptionFactory.wrapException(ExceptionFactory.java:30)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:156)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:147)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:142)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:333)
+	... 72 common frames omitted
+Caused by: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:84)
+	at org.mybatis.spring.transaction.SpringManagedTransaction.openConnection(SpringManagedTransaction.java:77)
+	at org.mybatis.spring.transaction.SpringManagedTransaction.getConnection(SpringManagedTransaction.java:64)
+	at org.apache.ibatis.executor.BaseExecutor.getConnection(BaseExecutor.java:348)
+	at org.apache.ibatis.executor.SimpleExecutor.prepareStatement(SimpleExecutor.java:89)
+	at org.apache.ibatis.executor.SimpleExecutor.doQuery(SimpleExecutor.java:64)
+	at org.apache.ibatis.executor.BaseExecutor.queryFromDatabase(BaseExecutor.java:336)
+	at org.apache.ibatis.executor.BaseExecutor.query(BaseExecutor.java:158)
+	at org.apache.ibatis.executor.CachingExecutor.query(CachingExecutor.java:110)
+	at com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor.intercept(MybatisPlusInterceptor.java:81)
+	at org.apache.ibatis.plugin.Plugin.invoke(Plugin.java:59)
+	at jdk.proxy2/jdk.proxy2.$Proxy90.query(Unknown Source)
+	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:154)
+	... 77 common frames omitted
+Caused by: java.sql.SQLException: Unsupported character encoding 'utf8mb4'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:89)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:81)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:55)
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:65)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:77)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:360)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:238)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:180)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:137)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:360)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:202)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:461)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:550)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:98)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
+	at org.springframework.jdbc.datasource.DataSourceUtils.fetchConnection(DataSourceUtils.java:160)
+	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:118)
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:81)
+	... 89 common frames omitted
+Caused by: com.mysql.cj.exceptions.WrongArgumentException: Unsupported character encoding 'utf8mb4'
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:502)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:486)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:52)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:95)
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:228)
+	at com.mysql.cj.jdbc.JdbcPropertySetImpl.postInitialization(JdbcPropertySetImpl.java:56)
+	at com.mysql.cj.conf.DefaultPropertySet.initializeProperties(DefaultPropertySet.java:223)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:353)
+	... 101 common frames omitted
+Caused by: java.io.UnsupportedEncodingException: utf8mb4
+	at java.base/java.lang.String.lookupCharset(String.java:850)
+	at java.base/java.lang.String.getBytes(String.java:1784)
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:226)
+	... 104 common frames omitted
+2026-09-24 14:43:06  WARN o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.logException 254:Resolved [org.mybatis.spring.MyBatisSystemException: <EOL><EOL>### Error querying database.  Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection<EOL><EOL>### The error may exist in com/fenglin/springboottest/mapper/UserMapper.java (best guess)<EOL><EOL>### The error may involve com.fenglin.springboottest.mapper.UserMapper.selectList<EOL><EOL>### The error occurred while executing a query<EOL><EOL>### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection]
+2026-09-24 14:44:20  INFO c.fenglin.springboottest.SpringBootTestApplication.logStarting 53:Starting SpringBootTestApplication using Java 21.0.10 with PID 10740 (C:\Users\Administrator\Desktop\springBootTest\target\classes started by Administrator in C:\Users\Administrator\Desktop\springBootTest)
+2026-09-24 14:44:20  DEBUG c.fenglin.springboottest.SpringBootTestApplication.logStarting 54:Running with Spring Boot v3.4.5, Spring v6.2.6
+2026-09-24 14:44:20  INFO c.fenglin.springboottest.SpringBootTestApplication.logStartupProfileInfo 658:The following 1 profile is active: "dev"
+2026-09-24 14:44:20  INFO o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor.logTo 252:Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-09-24 14:44:20  INFO o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor.logTo 252:For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-09-24 14:44:21  INFO o.s.boot.web.embedded.tomcat.TomcatWebServer.initialize 111:Tomcat initialized with port 8081 (http)
+2026-09-24 14:44:21  INFO org.apache.catalina.core.StandardService.log 168:Starting service [Tomcat]
+2026-09-24 14:44:21  INFO org.apache.catalina.core.StandardEngine.log 168:Starting Servlet engine: [Apache Tomcat/10.1.40]
+2026-09-24 14:44:21  INFO o.a.c.c.ContainerBase.[Tomcat].[localhost].[/api].log 168:Initializing Spring embedded WebApplicationContext
+2026-09-24 14:44:21  INFO o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext 301:Root WebApplicationContext: initialization completed in 1052 ms
+2026-09-24 14:44:22  INFO o.s.b.a.web.servlet.WelcomePageHandlerMapping.<init> 59:Adding welcome page: class path resource [static/index.html]
+2026-09-24 14:44:22  INFO o.s.b.d.autoconfigure.OptionalLiveReloadServer.startServer 59:LiveReload server is running on port 35729
+2026-09-24 14:44:22  INFO o.s.boot.web.embedded.tomcat.TomcatWebServer.start 243:Tomcat started on port 8081 (http) with context path '/api'
+2026-09-24 14:44:22  INFO c.fenglin.springboottest.SpringBootTestApplication.logStarted 59:Started SpringBootTestApplication in 2.141 seconds (process running for 2.47)
+2026-09-24 14:45:04  INFO o.a.c.c.ContainerBase.[Tomcat].[localhost].[/api].log 168:Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-24 14:45:04  INFO org.springframework.web.servlet.DispatcherServlet.initServletBean 532:Initializing Servlet 'dispatcherServlet'
+2026-09-24 14:45:04  INFO org.springframework.web.servlet.DispatcherServlet.initServletBean 554:Completed initialization in 0 ms
+2026-09-24 14:45:04  INFO com.zaxxer.hikari.HikariDataSource.getConnection 109:HikariPool-1 - Starting...
+2026-09-24 14:45:04  INFO com.zaxxer.hikari.pool.HikariPool.checkFailFast 554:HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7eba49a9
+2026-09-24 14:45:04  INFO com.zaxxer.hikari.HikariDataSource.getConnection 122:HikariPool-1 - Start completed.
+2026-09-24 14:45:04  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==>  Preparing: SELECT COUNT( * ) AS total FROM t_user WHERE (username = ?)
+2026-09-24 14:45:04  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==> Parameters: zhangsan(String)
+2026-09-24 14:45:04  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:<==      Total: 1
+2026-09-24 14:45:04  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==>  Preparing: SELECT COUNT( * ) AS total FROM t_user WHERE (email = ?)
+2026-09-24 14:45:04  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==> Parameters: zs@test.com(String)
+2026-09-24 14:45:04  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:<==      Total: 1
+2026-09-24 14:45:04  DEBUG c.fenglin.springboottest.mapper.UserMapper.insert.debug 135:==>  Preparing: INSERT INTO t_user ( username, password, email, nickname, status, token, token_expire_at, create_time, update_time ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )
+2026-09-24 14:45:04  DEBUG c.fenglin.springboottest.mapper.UserMapper.insert.debug 135:==> Parameters: zhangsan(String), $2a$10$aHns9UuGsbLK9H2m7ajjiOZBS/OGA/Cu9tpKeGIrSAc/fPH/8uBrS(String), zs@test.com(String), zhangsan(String), 1(Integer), 203d869a8fe941a2842d8898eb3d8079(String), 2026-10-01T14:45:04.761146400(LocalDateTime), 2026-09-24T14:45:04.761146400(LocalDateTime), 2026-09-24T14:45:04.761146400(LocalDateTime)
+2026-09-24 14:45:04  DEBUG c.fenglin.springboottest.mapper.UserMapper.insert.debug 135:<==    Updates: 1
+2026-09-24 14:45:04  INFO c.fenglin.springboottest.controller.AuthController.register 47:用户注册成功：id=1, username=zhangsan
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==>  Preparing: SELECT COUNT( * ) AS total FROM t_user WHERE (username = ?)
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==> Parameters: zhangsan(String)
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:<==      Total: 1
+2026-09-24 14:45:05  WARN o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.logException 254:Resolved [com.fenglin.springboottest.common.BusinessException: 用户名已被注册]
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==>  Preparing: SELECT COUNT( * ) AS total FROM t_user WHERE (username = ?)
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==> Parameters: lisi(String)
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:<==      Total: 1
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==>  Preparing: SELECT COUNT( * ) AS total FROM t_user WHERE (email = ?)
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==> Parameters: zs@test.com(String)
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:<==      Total: 1
+2026-09-24 14:45:05  WARN o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.logException 254:Resolved [com.fenglin.springboottest.common.BusinessException: 邮箱已被注册]
+2026-09-24 14:45:05  WARN o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.logException 254:Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public com.fenglin.springboottest.common.AuthResponse com.fenglin.springboottest.controller.AuthController.register(com.fenglin.springboottest.dto.RegisterRequest): [Field error in object 'registerRequest' on field 'email': rejected value [not-an-email]; codes [Email.registerRequest.email,Email.email,Email.java.lang.String,Email]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [registerRequest.email,email]; arguments []; default message [email],[Ljakarta.validation.constraints.Pattern$Flag;@333add86,.*]; default message [请输入有效的邮箱地址]] ]
+2026-09-24 14:45:05  WARN o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.logException 254:Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public com.fenglin.springboottest.common.AuthResponse com.fenglin.springboottest.controller.AuthController.register(com.fenglin.springboottest.dto.RegisterRequest): [Field error in object 'registerRequest' on field 'password': rejected value [123]; codes [Size.registerRequest.password,Size.password,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [registerRequest.password,password]; arguments []; default message [password],32,6]; default message [密码长度需为 6-32 位]] ]
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:==>  Preparing: SELECT id,username,password,email,nickname,status,token,token_expire_at,create_time,update_time FROM t_user WHERE (username = ? OR email = ?) LIMIT 1
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:==> Parameters: zhangsan(String), zhangsan(String)
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:<==      Total: 1
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:==>  Preparing: UPDATE t_user SET username=?, password=?, email=?, nickname=?, status=?, token=?, token_expire_at=?, create_time=?, update_time=? WHERE id=?
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:==> Parameters: zhangsan(String), $2a$10$aHns9UuGsbLK9H2m7ajjiOZBS/OGA/Cu9tpKeGIrSAc/fPH/8uBrS(String), zs@test.com(String), zhangsan(String), 1(Integer), e9d66450a74c42f08a90cc2b156673a5(String), 2026-10-01T14:45:05.718606400(LocalDateTime), 2026-09-24T14:45:05(LocalDateTime), 2026-09-24T14:45:05.718606400(LocalDateTime), 1(Long)
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:<==    Updates: 1
+2026-09-24 14:45:05  INFO c.fenglin.springboottest.controller.AuthController.login 60:用户登录成功：id=1, username=zhangsan
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:==>  Preparing: SELECT id,username,password,email,nickname,status,token,token_expire_at,create_time,update_time FROM t_user WHERE (username = ? OR email = ?) LIMIT 1
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:==> Parameters: zhangsan(String), zhangsan(String)
+2026-09-24 14:45:05  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:<==      Total: 1
+2026-09-24 14:45:05  WARN o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.logException 254:Resolved [com.fenglin.springboottest.common.BusinessException: 用户名或密码错误]
+2026-09-24 14:45:06  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:==>  Preparing: SELECT id,username,password,email,nickname,status,token,token_expire_at,create_time,update_time FROM t_user WHERE (username = ? OR email = ?) LIMIT 1
+2026-09-24 14:45:06  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:==> Parameters: zs@test.com(String), zs@test.com(String)
+2026-09-24 14:45:06  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:<==      Total: 1
+2026-09-24 14:45:06  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:==>  Preparing: UPDATE t_user SET username=?, password=?, email=?, nickname=?, status=?, token=?, token_expire_at=?, create_time=?, update_time=? WHERE id=?
+2026-09-24 14:45:06  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:==> Parameters: zhangsan(String), $2a$10$aHns9UuGsbLK9H2m7ajjiOZBS/OGA/Cu9tpKeGIrSAc/fPH/8uBrS(String), zs@test.com(String), zhangsan(String), 1(Integer), 063b43248c9d4af3b950089b9ecd8246(String), 2026-10-01T14:45:06.180513500(LocalDateTime), 2026-09-24T14:45:05(LocalDateTime), 2026-09-24T14:45:06.180513500(LocalDateTime), 1(Long)
+2026-09-24 14:45:06  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:<==    Updates: 1
+2026-09-24 14:45:06  INFO c.fenglin.springboottest.controller.AuthController.login 60:用户登录成功：id=1, username=zhangsan
+2026-09-24 14:45:06  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:==>  Preparing: SELECT id,username,password,email,nickname,status,token,token_expire_at,create_time,update_time FROM t_user WHERE (username = ? OR email = ?) LIMIT 1
+2026-09-24 14:45:06  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:==> Parameters: nobody(String), nobody(String)
+2026-09-24 14:45:06  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:<==      Total: 0
+2026-09-24 14:45:06  WARN o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver.logException 254:Resolved [com.fenglin.springboottest.common.BusinessException: 用户名或密码错误]
+2026-09-24 14:55:13  INFO c.fenglin.springboottest.SpringBootTestApplication.logStarting 53:Starting SpringBootTestApplication using Java 21.0.10 with PID 1872 (C:\Users\Administrator\Desktop\springBootTest\target\classes started by Administrator in C:\Users\Administrator\Desktop\springBootTest)
+2026-09-24 14:55:13  DEBUG c.fenglin.springboottest.SpringBootTestApplication.logStarting 54:Running with Spring Boot v3.4.5, Spring v6.2.6
+2026-09-24 14:55:13  INFO c.fenglin.springboottest.SpringBootTestApplication.logStartupProfileInfo 658:The following 1 profile is active: "dev"
+2026-09-24 14:55:13  INFO o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor.logTo 252:Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-09-24 14:55:13  INFO o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor.logTo 252:For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-09-24 14:55:14  INFO o.s.boot.web.embedded.tomcat.TomcatWebServer.initialize 111:Tomcat initialized with port 8081 (http)
+2026-09-24 14:55:14  INFO org.apache.catalina.core.StandardService.log 168:Starting service [Tomcat]
+2026-09-24 14:55:14  INFO org.apache.catalina.core.StandardEngine.log 168:Starting Servlet engine: [Apache Tomcat/10.1.40]
+2026-09-24 14:55:14  INFO o.a.c.c.ContainerBase.[Tomcat].[localhost].[/api].log 168:Initializing Spring embedded WebApplicationContext
+2026-09-24 14:55:14  INFO o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext 301:Root WebApplicationContext: initialization completed in 1324 ms
+2026-09-24 14:55:15  INFO o.s.b.a.web.servlet.WelcomePageHandlerMapping.<init> 59:Adding welcome page: class path resource [static/index.html]
+2026-09-24 14:55:15  INFO o.s.b.d.autoconfigure.OptionalLiveReloadServer.startServer 59:LiveReload server is running on port 35729
+2026-09-24 14:55:15  INFO o.s.boot.web.embedded.tomcat.TomcatWebServer.start 243:Tomcat started on port 8081 (http) with context path '/api'
+2026-09-24 14:55:15  INFO c.fenglin.springboottest.SpringBootTestApplication.logStarted 59:Started SpringBootTestApplication in 2.762 seconds (process running for 3.252)
+2026-09-24 14:55:51  INFO o.a.c.c.ContainerBase.[Tomcat].[localhost].[/api].log 168:Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-24 14:55:51  INFO org.springframework.web.servlet.DispatcherServlet.initServletBean 532:Initializing Servlet 'dispatcherServlet'
+2026-09-24 14:55:51  INFO org.springframework.web.servlet.DispatcherServlet.initServletBean 554:Completed initialization in 0 ms
+2026-09-24 14:55:51  INFO com.zaxxer.hikari.HikariDataSource.getConnection 109:HikariPool-1 - Starting...
+2026-09-24 14:55:51  INFO com.zaxxer.hikari.pool.HikariPool.checkFailFast 554:HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@57abdcf7
+2026-09-24 14:55:51  INFO com.zaxxer.hikari.HikariDataSource.getConnection 122:HikariPool-1 - Start completed.
+2026-09-24 14:55:51  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==>  Preparing: SELECT COUNT( * ) AS total FROM t_user WHERE (username = ?)
+2026-09-24 14:55:51  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==> Parameters: wangwu(String)
+2026-09-24 14:55:51  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:<==      Total: 1
+2026-09-24 14:55:51  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==>  Preparing: SELECT COUNT( * ) AS total FROM t_user WHERE (email = ?)
+2026-09-24 14:55:51  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==> Parameters: ww@test.com(String)
+2026-09-24 14:55:51  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:<==      Total: 1
+2026-09-24 14:55:51  DEBUG c.fenglin.springboottest.mapper.UserMapper.insert.debug 135:==>  Preparing: INSERT INTO t_user ( username, password, email, nickname, status, create_time, update_time ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+2026-09-24 14:55:51  DEBUG c.fenglin.springboottest.mapper.UserMapper.insert.debug 135:==> Parameters: wangwu(String), $2a$10$6USh9MV5/D4JKjZXxLa84OKEDY5h/KTpnNNDzelwL7JYmuvQamkea(String), ww@test.com(String), wangwu(String), 1(Integer), 2026-09-24T14:55:51.657273300(LocalDateTime), 2026-09-24T14:55:51.657273300(LocalDateTime)
+2026-09-24 14:55:51  DEBUG c.fenglin.springboottest.mapper.UserMapper.insert.debug 135:<==    Updates: 1
+2026-09-24 14:55:51  INFO c.fenglin.springboottest.controller.AuthController.register 55:用户注册成功：id=2, username=wangwu
+2026-09-24 14:55:52  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:==>  Preparing: SELECT id,username,password,email,nickname,status,create_time,update_time FROM t_user WHERE id=?
+2026-09-24 14:55:52  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:==> Parameters: 2(Long)
+2026-09-24 14:55:52  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:<==      Total: 1
+2026-09-24 14:55:53  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:==>  Preparing: SELECT id,username,password,email,nickname,status,create_time,update_time FROM t_user WHERE id=?
+2026-09-24 14:55:53  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:==> Parameters: 2(Long)
+2026-09-24 14:55:53  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:<==      Total: 1
+2026-09-24 14:56:36  INFO c.fenglin.springboottest.SpringBootTestApplication.logStarting 53:Starting SpringBootTestApplication using Java 21.0.10 with PID 3840 (C:\Users\Administrator\Desktop\springBootTest\target\classes started by Administrator in C:\Users\Administrator\Desktop\springBootTest)
+2026-09-24 14:56:36  DEBUG c.fenglin.springboottest.SpringBootTestApplication.logStarting 54:Running with Spring Boot v3.4.5, Spring v6.2.6
+2026-09-24 14:56:36  INFO c.fenglin.springboottest.SpringBootTestApplication.logStartupProfileInfo 658:The following 1 profile is active: "dev"
+2026-09-24 14:56:36  INFO o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor.logTo 252:Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-09-24 14:56:36  INFO o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor.logTo 252:For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-09-24 14:56:37  INFO o.s.boot.web.embedded.tomcat.TomcatWebServer.initialize 111:Tomcat initialized with port 8081 (http)
+2026-09-24 14:56:37  INFO org.apache.catalina.core.StandardService.log 168:Starting service [Tomcat]
+2026-09-24 14:56:37  INFO org.apache.catalina.core.StandardEngine.log 168:Starting Servlet engine: [Apache Tomcat/10.1.40]
+2026-09-24 14:56:37  INFO o.a.c.c.ContainerBase.[Tomcat].[localhost].[/api].log 168:Initializing Spring embedded WebApplicationContext
+2026-09-24 14:56:37  INFO o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext 301:Root WebApplicationContext: initialization completed in 1076 ms
+2026-09-24 14:56:37  INFO o.s.b.a.web.servlet.WelcomePageHandlerMapping.<init> 59:Adding welcome page: class path resource [static/index.html]
+2026-09-24 14:56:37  INFO o.s.b.d.autoconfigure.OptionalLiveReloadServer.startServer 59:LiveReload server is running on port 35729
+2026-09-24 14:56:37  INFO o.s.boot.web.embedded.tomcat.TomcatWebServer.start 243:Tomcat started on port 8081 (http) with context path '/api'
+2026-09-24 14:56:37  INFO c.fenglin.springboottest.SpringBootTestApplication.logStarted 59:Started SpringBootTestApplication in 2.181 seconds (process running for 2.537)
+2026-09-24 14:57:15  INFO o.a.c.c.ContainerBase.[Tomcat].[localhost].[/api].log 168:Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-24 14:57:15  INFO org.springframework.web.servlet.DispatcherServlet.initServletBean 532:Initializing Servlet 'dispatcherServlet'
+2026-09-24 14:57:15  INFO org.springframework.web.servlet.DispatcherServlet.initServletBean 554:Completed initialization in 0 ms
+2026-09-24 14:57:15  INFO com.zaxxer.hikari.HikariDataSource.getConnection 109:HikariPool-1 - Starting...
+2026-09-24 14:57:16  INFO com.zaxxer.hikari.pool.HikariPool.checkFailFast 554:HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6e027db9
+2026-09-24 14:57:16  INFO com.zaxxer.hikari.HikariDataSource.getConnection 122:HikariPool-1 - Start completed.
+2026-09-24 14:57:16  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==>  Preparing: SELECT COUNT( * ) AS total FROM t_user WHERE (username = ?)
+2026-09-24 14:57:16  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==> Parameters: zhaoliu(String)
+2026-09-24 14:57:16  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:<==      Total: 1
+2026-09-24 14:57:16  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==>  Preparing: SELECT COUNT( * ) AS total FROM t_user WHERE (email = ?)
+2026-09-24 14:57:16  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:==> Parameters: zl@test.com(String)
+2026-09-24 14:57:16  DEBUG c.f.springboottest.mapper.UserMapper.selectCount.debug 135:<==      Total: 1
+2026-09-24 14:57:16  DEBUG c.fenglin.springboottest.mapper.UserMapper.insert.debug 135:==>  Preparing: INSERT INTO t_user ( username, password, email, nickname, status, create_time, update_time ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+2026-09-24 14:57:16  DEBUG c.fenglin.springboottest.mapper.UserMapper.insert.debug 135:==> Parameters: zhaoliu(String), $2a$10$rbK1Li5t559HzmJ5cLw.A.WQmqoYpvYo1vivPNF5iESFbIvHiQaqu(String), zl@test.com(String), zhaoliu(String), 1(Integer), 2026-09-24T14:57:16.141273500(LocalDateTime), 2026-09-24T14:57:16.141273500(LocalDateTime)
+2026-09-24 14:57:16  DEBUG c.fenglin.springboottest.mapper.UserMapper.insert.debug 135:<==    Updates: 1
+2026-09-24 14:57:16  INFO c.fenglin.springboottest.controller.AuthController.register 55:用户注册成功：id=3, username=zhaoliu
+2026-09-24 14:57:17  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:==>  Preparing: SELECT id,username,password,email,nickname,status,create_time,update_time FROM t_user WHERE id=?
+2026-09-24 14:57:17  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:==> Parameters: 3(Long)
+2026-09-24 14:57:17  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:<==      Total: 1
+2026-09-24 14:57:17  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:==>  Preparing: SELECT id,username,password,email,nickname,status,create_time,update_time FROM t_user WHERE (username = ? OR email = ?) LIMIT 1
+2026-09-24 14:57:17  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:==> Parameters: zhangsan(String), zhangsan(String)
+2026-09-24 14:57:17  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:<==      Total: 1
+2026-09-24 14:57:18  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:==>  Preparing: UPDATE t_user SET username=?, password=?, email=?, nickname=?, status=?, create_time=?, update_time=? WHERE id=?
+2026-09-24 14:57:18  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:==> Parameters: zhangsan(String), $2a$10$aHns9UuGsbLK9H2m7ajjiOZBS/OGA/Cu9tpKeGIrSAc/fPH/8uBrS(String), zs@test.com(String), zhangsan(String), 1(Integer), 2026-09-24T14:45:05(LocalDateTime), 2026-09-24T14:57:18.031272500(LocalDateTime), 1(Long)
+2026-09-24 14:57:18  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:<==    Updates: 1
+2026-09-24 14:57:18  INFO c.fenglin.springboottest.controller.AuthController.login 68:用户登录成功：id=1, username=zhangsan
+2026-09-24 15:01:29  INFO c.fenglin.springboottest.SpringBootTestApplication.logStarting 53:Starting SpringBootTestApplication using Java 21.0.10 with PID 10292 (C:\Users\Administrator\Desktop\springBootTest\target\classes started by Administrator in C:\Users\Administrator\Desktop\springBootTest)
+2026-09-24 15:01:29  DEBUG c.fenglin.springboottest.SpringBootTestApplication.logStarting 54:Running with Spring Boot v3.4.5, Spring v6.2.6
+2026-09-24 15:01:29  INFO c.fenglin.springboottest.SpringBootTestApplication.logStartupProfileInfo 658:The following 1 profile is active: "dev"
+2026-09-24 15:01:29  INFO o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor.logTo 252:Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-09-24 15:01:29  INFO o.s.b.d.env.DevToolsPropertyDefaultsPostProcessor.logTo 252:For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-09-24 15:01:30  INFO o.s.boot.web.embedded.tomcat.TomcatWebServer.initialize 111:Tomcat initialized with port 8081 (http)
+2026-09-24 15:01:30  INFO org.apache.catalina.core.StandardService.log 168:Starting service [Tomcat]
+2026-09-24 15:01:30  INFO org.apache.catalina.core.StandardEngine.log 168:Starting Servlet engine: [Apache Tomcat/10.1.40]
+2026-09-24 15:01:30  INFO o.a.c.c.ContainerBase.[Tomcat].[localhost].[/api].log 168:Initializing Spring embedded WebApplicationContext
+2026-09-24 15:01:30  INFO o.s.b.w.s.c.ServletWebServerApplicationContext.prepareWebApplicationContext 301:Root WebApplicationContext: initialization completed in 1134 ms
+2026-09-24 15:01:30  INFO o.s.b.a.web.servlet.WelcomePageHandlerMapping.<init> 59:Adding welcome page: class path resource [static/index.html]
+2026-09-24 15:01:30  WARN o.s.b.d.autoconfigure.OptionalLiveReloadServer.startServer 62:Unable to start LiveReload server
+2026-09-24 15:01:30  WARN o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext.refresh 635:Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-09-24 15:01:30  INFO o.s.b.a.logging.ConditionEvaluationReportLogger.logMessage 82:
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-09-24 15:01:30  ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter.report 40:
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8081 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8081 or configure this application to listen on another port.
+
+2026-09-24 15:02:01  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:==>  Preparing: SELECT id,username,password,email,nickname,status,create_time,update_time FROM t_user WHERE (username = ? OR email = ?) LIMIT 1
+2026-09-24 15:02:01  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:==> Parameters: zhangsan(String), zhangsan(String)
+2026-09-24 15:02:01  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:<==      Total: 1
+2026-09-24 15:02:01  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:==>  Preparing: UPDATE t_user SET username=?, password=?, email=?, nickname=?, status=?, create_time=?, update_time=? WHERE id=?
+2026-09-24 15:02:01  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:==> Parameters: zhangsan(String), $2a$10$aHns9UuGsbLK9H2m7ajjiOZBS/OGA/Cu9tpKeGIrSAc/fPH/8uBrS(String), zs@test.com(String), zhangsan(String), 1(Integer), 2026-09-24T14:45:05(LocalDateTime), 2026-09-24T15:02:01.556834600(LocalDateTime), 1(Long)
+2026-09-24 15:02:01  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:<==    Updates: 1
+2026-09-24 15:02:01  INFO c.fenglin.springboottest.controller.AuthController.login 68:用户登录成功：id=1, username=zhangsan
+2026-09-24 15:03:54  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:==>  Preparing: SELECT id,username,password,email,nickname,status,create_time,update_time FROM t_user WHERE (username = ? OR email = ?) LIMIT 1
+2026-09-24 15:03:54  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:==> Parameters: zhangsan(String), zhangsan(String)
+2026-09-24 15:03:54  DEBUG c.f.springboottest.mapper.UserMapper.selectList.debug 135:<==      Total: 1
+2026-09-24 15:03:54  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:==>  Preparing: UPDATE t_user SET username=?, password=?, email=?, nickname=?, status=?, create_time=?, update_time=? WHERE id=?
+2026-09-24 15:03:54  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:==> Parameters: zhangsan(String), $2a$10$aHns9UuGsbLK9H2m7ajjiOZBS/OGA/Cu9tpKeGIrSAc/fPH/8uBrS(String), zs@test.com(String), zhangsan(String), 1(Integer), 2026-09-24T14:45:05(LocalDateTime), 2026-09-24T15:03:54.097306600(LocalDateTime), 1(Long)
+2026-09-24 15:03:54  DEBUG c.f.springboottest.mapper.UserMapper.updateById.debug 135:<==    Updates: 1
+2026-09-24 15:03:54  INFO c.fenglin.springboottest.controller.AuthController.login 68:用户登录成功：id=1, username=zhangsan
+2026-09-24 15:03:54  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:==>  Preparing: SELECT id,username,password,email,nickname,status,create_time,update_time FROM t_user WHERE id=?
+2026-09-24 15:03:54  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:==> Parameters: 1(Long)
+2026-09-24 15:03:54  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:<==      Total: 1
+2026-09-24 15:03:54  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:==>  Preparing: SELECT id,username,password,email,nickname,status,create_time,update_time FROM t_user WHERE id=?
+2026-09-24 15:03:54  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:==> Parameters: 1(Long)
+2026-09-24 15:03:54  DEBUG c.f.springboottest.mapper.UserMapper.selectById.debug 135:<==      Total: 1
