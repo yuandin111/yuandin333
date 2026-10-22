@@ -1,0 +1,158 @@
+# -*- coding: utf-8 -*-
+"""
+一次性生成器：为 登陆页面-vue + springBootTest 生成 启动/暂停脚本(GBK) 与备忘(UTF-8 BOM)。
+电脑每次重置只会删 node_modules 和 target；本文件若也被删，重新运行它即可再生成全部脚本。
+运行：python 生成项目脚本.py
+"""
+import os
+
+DESKTOP = r"C:\Users\Administrator\Desktop"
+BACKEND = os.path.join(DESKTOP, "springBootTest")
+FRONTEND = os.path.join(DESKTOP, "登陆页面-vue")
+
+# ---------- 后端启动脚本 ----------
+backend_bat = r'''@echo off
+chcp 936 >nul
+cd /d "%~dp0"
+
+REM ===== 1. 自愈：补回缺失的 maven 包装器配置 =====
+if not exist ".mvn\wrapper\maven-wrapper.properties" (
+    if not exist ".mvn\wrapper" md ".mvn\wrapper"
+    > .mvn\wrapper\maven-wrapper.properties echo distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.16/apache-maven-3.9.16-bin.zip
+)
+
+REM ===== 2. 清掉 IDE 注入的 SERVER__PORT，防止端口被劫持到 52242 =====
+set "SERVER__PORT="
+
+REM ===== 3. 尽力初始化数据库(幂等；需 MySQL 已启动) =====
+set "MYSQLBIN="
+if exist "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" set "MYSQLBIN=C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
+if not defined MYSQLBIN if exist "C:\Program Files (x86)\MySQL\MySQL Server 8.0\bin\mysql.exe" set "MYSQLBIN=C:\Program Files (x86)\MySQL\MySQL Server 8.0\bin\mysql.exe"
+if defined MYSQLBIN (
+    echo [1/3] 初始化数据库 springboot_test ...
+    "%MYSQLBIN%" -uroot -p123456 < "%~dp0sql\springboot_test.sql" 2>nul
+) else (
+    echo [提示] 未找到 mysql 客户端，跳过初始化(若数据库已存在则无影响)。
+)
+
+REM ===== 4. 启动后端(强制 8081；target 每次重启会被删，这里会重新构建) =====
+echo [2/3] 正在构建并启动 Spring Boot 后端(端口 8081)，首次需下载依赖请稍候...
+call mvnw.cmd spring-boot:run -Dspring-boot.run.arguments=--server.port=8081
+echo [3/3] 后端已退出。
+pause
+'''
+
+# ---------- 前端启动脚本 ----------
+frontend_bat = r'''@echo off
+chcp 936 >nul
+cd /d "%~dp0"
+
+REM ===== 1. 自愈：补回 .env，指到后端 /api =====
+if not exist ".env" (
+    > .env echo VITE_API_BASE=http://localhost:8081/api
+)
+
+REM ===== 2. 安装依赖(node_modules 每次重启会被删，需重装) =====
+echo [1/2] 安装前端依赖...
+call npm install
+
+REM ===== 3. 启动前端 =====
+echo [2/2] 启动 Vue 前端(端口 5173)...
+call npm run dev
+pause
+'''
+
+# ---------- 一键启动(桌面) ----------
+start_bat = r'''@echo off
+chcp 936 >nul
+echo 正在启动前后端(会弹出两个窗口)...
+start "SpringBoot后端-8081" cmd /k "%~dp0springBootTest\启动后端.bat"
+start "Vue前端-5173" cmd /k "%~dp0登陆页面-vue\启动前端.bat"
+echo.
+echo 前端: http://localhost:5173/
+echo 后端: http://localhost:8081/api/auth/login
+echo 测试账号: admin / 123456
+echo.
+pause
+'''
+
+# ---------- 一键暂停(桌面) ----------
+stop_bat = r'''@echo off
+chcp 936 >nul
+echo 正在停止后端(8081)...
+for /f "tokens=5" %%P in ('netstat -ano ^| findstr ":8081" ^| findstr "LISTENING"') do taskkill /f /t /pid %%P >nul 2>&1
+echo 正在停止前端(5173)...
+for /f "tokens=5" %%P in ('netstat -ano ^| findstr ":5173" ^| findstr "LISTENING"') do taskkill /f /t /pid %%P >nul 2>&1
+echo 已停止前后端(MySQL 服务未动)。
+pause
+'''
+
+# ---------- 给 AI 自己的备忘 ----------
+notes = r'''==================== 登陆页面-vue + springBootTest 启动备忘 ====================
+(给 AI 自己看：每次重启后按此操作，别再从头排查)
+
+【是什么】前后端分离登录项目
+  - 前端 登陆页面-vue：Vue3 + Vite + axios，端口 5173，无自己的数据库
+  - 后端 springBootTest：Spring Boot 3.4.5 + MyBatis-Plus 3.5.7 + MySQL，端口 8081
+  - 数据库：本地 MySQL 8.0(localhost:3306)，库 springboot_test，表 sys_user
+  - 测试账号：admin / 123456(密码 MD5 存储)
+
+【端口】前端 5173 / 后端 8081 / MySQL 3306
+
+【一键启动/暂停】在桌面(两个项目文件夹的上一级)：
+  - 启动项目.bat  -> 弹出两个窗口分别起后端、前端
+  - 暂停项目.bat  -> 按端口杀掉 8081 和 5173 的进程(不动 MySQL)
+  每个项目里也各有 启动后端.bat / 启动前端.bat 可单独启动。
+
+【关键坑(必记，别再踩)】
+1) 端口劫持：WorkBuddy/CodeBuddy 这个 IDE 会往环境注入 SERVER__PORT=52242；
+   Spring Boot 中 OS 环境变量优先级高于 application-*.properties，会把 server.port
+   覆盖成 52242，又与 IDE 自身端口冲突 -> 后端启动失败(Tomcat initialized with port 52242)。
+   解决：启动强制 --server.port=8081(命令行参数优先级最高)。脚本已内置。
+   我在 Bash 里跑后端必须先 unset SERVER__PORT，否则一样中招。
+2) 每次重启 node_modules、target 会被删 -> 必须 npm install + maven 重新构建。
+   脚本已内置；所以启动前别指望这两个文件夹存在。
+3) 前后端路径不一致：前端 auth.js 写 /auth/login，后端实际 /api/auth/login。
+   靠前端 .env 的 VITE_API_BASE=http://localhost:8081/api 对齐。
+   不配 .env 前端走“演示模式”(假登录，不连库)。
+
+【项目原本缺失、已补齐(重置丢失就用桌面 生成项目脚本.py 重跑)】
+  - springBootTest/.mvn/wrapper/maven-wrapper.properties (maven 3.9.16) —— 原来没有，mvnw 直接报错
+  - 登陆页面-vue/.env (VITE_API_BASE=http://localhost:8081/api)
+  - springBootTest/mvn-direct.sh —— 我在 Git Bash 下跑后端专用(mvn 脚本在 Git Bash 会把
+    unix 路径传给 Windows java 导致 classworlds 报错；此脚本直接调 java 启动 classworlds 绕过)
+
+【后端手动启动(Bash 环境，供 AI 自己)】
+  cd springBootTest && unset SERVER__PORT && ./mvn-direct.sh spring-boot:run
+
+【数据库】MySQL 8.0 root/123456；初始化脚本 springBootTest/sql/springboot_test.sql(幂等，可反复跑)；
+  MySQL 需运行中(系统服务，一般开机自启)。
+
+【登录自测】
+  curl -X POST http://localhost:8081/api/auth/login -H "Content-Type: application/json" -d "{\"username\":\"admin\",\"password\":\"123456\"}"
+  成功 {"code":200,...,"token":...}；错误密码返回 code:401。
+================================================================================
+'''
+
+
+def w(path, data, enc):
+    data = data.replace("\r\n", "\n").replace("\r", "\n")  # 统一换行
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding=enc, newline="\r\n") as f:
+        f.write(data)
+    print("written:", path, "(%s)" % enc)
+
+
+# 脚本(GBK，配合 chcp 936)
+w(os.path.join(DESKTOP, "启动项目.bat"), start_bat, "gbk")
+w(os.path.join(DESKTOP, "暂停项目.bat"), stop_bat, "gbk")
+w(os.path.join(BACKEND, "启动后端.bat"), backend_bat, "gbk")
+w(os.path.join(FRONTEND, "启动前端.bat"), frontend_bat, "gbk")
+# 备忘(UTF-8 BOM，记事本可直接看)
+w(os.path.join(BACKEND, "启动备忘.txt"), notes, "utf-8-sig")
+# 补齐原本缺失的前置文件
+w(os.path.join(BACKEND, ".mvn", "wrapper", "maven-wrapper.properties"),
+  "distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.16/apache-maven-3.9.16-bin.zip\n",
+  "utf-8")
+w(os.path.join(FRONTEND, ".env"), "VITE_API_BASE=http://localhost:8081/api\n", "utf-8")
+print("全部完成。")
