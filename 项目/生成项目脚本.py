@@ -7,8 +7,9 @@
 import os
 
 DESKTOP = r"C:\Users\Administrator\Desktop"
-BACKEND = os.path.join(DESKTOP, "springBootTest")
-FRONTEND = os.path.join(DESKTOP, "登陆页面-vue")
+ROOT = os.path.join(DESKTOP, "项目")   # 两个项目实际都放在 Desktop\项目\ 下
+BACKEND = os.path.join(ROOT, "springBootTest")
+FRONTEND = os.path.join(ROOT, "登陆页面-vue")
 
 # ---------- 后端启动脚本 ----------
 backend_bat = r'''@echo off
@@ -47,18 +48,44 @@ frontend_bat = r'''@echo off
 chcp 936 >nul
 cd /d "%~dp0"
 
-REM ===== 1. 自愈：补回 .env，指到后端 /api =====
+REM ===== 0. PATH 兜底：保证双击运行时能找到 node / npm =====
+set "PATH=D:\Program Files\nodejs;C:\Users\Administrator\.workbuddy\binaries\node\versions\22.22.2-2;%PATH%"
+where node >nul 2>nul || (echo [错误] 未找到 node.exe，请确认 Node.js 已安装或修正 PATH。 & pause & exit /b 1)
+where npm  >nul 2>nul || (echo [错误] 未找到 npm，请确认 Node.js 已安装或修正 PATH。 & pause & exit /b 1)
+echo Node 版本:
+node -v
+
+REM ===== 1. 自愈：确保 .env 存在且指向后端 /api =====
 if not exist ".env" (
+    echo [自愈] 缺少 .env，正在创建...
     > .env echo VITE_API_BASE=http://localhost:8081/api
 )
+findstr /c:"VITE_API_BASE" ".env" >nul 2>nul || (>> .env echo VITE_API_BASE=http://localhost:8081/api)
+echo [配置] VITE_API_BASE 已就绪(缺失会让前端走演示模式，不连后端)。
 
 REM ===== 2. 安装依赖(node_modules 每次重启会被删，需重装) =====
-echo [1/2] 安装前端依赖...
-call npm install
+echo [1/3] 安装前端依赖...
+call npm install --no-audit --no-fund
+if errorlevel 1 (
+    echo [错误] npm install 失败，请查看上方日志后重试。
+    pause
+    exit /b 1
+)
 
-REM ===== 3. 启动前端 =====
-echo [2/2] 启动 Vue 前端(端口 5173)...
+REM ===== 3. 前置检查：后端 8081 是否已启动 =====
+echo [2/3] 检查后端 http://localhost:8081 ...
+netstat -ano | findstr ":8081" | findstr "LISTENING" >nul 2>nul
+if errorlevel 1 (
+    echo   [警告] 后端 8081 未在监听，登录/注册将失败。
+    echo   请先双击 springBootTest\启动后端.bat
+) else (
+    echo   后端已就绪。
+)
+
+REM ===== 4. 启动前端 =====
+echo [3/3] 启动 Vue 前端(端口 5173)...
 call npm run dev
+echo 前端已退出。
 pause
 '''
 
@@ -66,8 +93,8 @@ pause
 start_bat = r'''@echo off
 chcp 936 >nul
 echo 正在启动前后端(会弹出两个窗口)...
-start "SpringBoot后端-8081" cmd /k "%~dp0springBootTest\启动后端.bat"
-start "Vue前端-5173" cmd /k "%~dp0登陆页面-vue\启动前端.bat"
+start "SpringBoot后端-8081" cmd /k "%~dp0项目\springBootTest\启动后端.bat"
+start "Vue前端-5173" cmd /k "%~dp0项目\登陆页面-vue\启动前端.bat"
 echo.
 echo 前端: http://localhost:5173/
 echo 后端: http://localhost:8081/api/auth/login
@@ -97,6 +124,11 @@ notes = r'''==================== 登陆页面-vue + springBootTest 启动备忘 
   - 数据库：本地 MySQL 8.0(localhost:3306)，库 springboot_test，表 sys_user
   - 测试账号：admin / 123456(密码 MD5 存储)
 
+【实际路径】(注意：两个项目都在 Desktop\项目\ 下，不在桌面根)
+  C:\Users\Administrator\Desktop\项目\登陆页面-vue
+  C:\Users\Administrator\Desktop\项目\springBootTest
+  重新生成脚本的 生成项目脚本.py 也在 Desktop\项目\ 里，直接 python 生成项目脚本.py 即可。
+
 【端口】前端 5173 / 后端 8081 / MySQL 3306
 
 【一键启动/暂停】在桌面(两个项目文件夹的上一级)：
@@ -116,7 +148,19 @@ notes = r'''==================== 登陆页面-vue + springBootTest 启动备忘 
    靠前端 .env 的 VITE_API_BASE=http://localhost:8081/api 对齐。
    不配 .env 前端走“演示模式”(假登录，不连库)。
 
-【项目原本缺失、已补齐(重置丢失就用桌面 生成项目脚本.py 重跑)】
+4) 数据库 springboot_test 不一定存在！后端会启动成功但登录报
+   java.sql.SQLSyntaxErrorException: Unknown database 'springboot_test'。
+   手动补一次(脚本含 DROP TABLE，会重置用户表)：
+   "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -uroot -p123456 < springBootTest\sql\springboot_test.sql
+5) .bat 文件必须是【GBK 编码 + CRLF 换行】！用编辑器/工具写成 UTF-8 或 LF 换行会导致
+   if not exist ".env" ( ... ) 这类括号代码块解析失败 -> .env 建不出来 -> 前端静默降级为
+   "演示模式"(假登录，压根不请求后端)，表现就是"启动脚本失效"。
+   生成脚本.py 里已用 encoding="gbk", newline="\r\n" 保证，别再用普通写入工具改这两个 bat。
+6) vite 只在启动时读 .env，改完 .env 必须重启 dev server 才生效。
+   验证是否生效：curl http://localhost:5173/src/services/auth.js | head
+   看到 "VITE_API_BASE":"http://localhost:8081/api" 才算真的连上后端。
+
+【项目原本缺失、已补齐(重置丢失就用 项目\生成项目脚本.py 重跑)】
   - springBootTest/.mvn/wrapper/maven-wrapper.properties (maven 3.9.16) —— 原来没有，mvnw 直接报错
   - 登陆页面-vue/.env (VITE_API_BASE=http://localhost:8081/api)
   - springBootTest/mvn-direct.sh —— 我在 Git Bash 下跑后端专用(mvn 脚本在 Git Bash 会把
