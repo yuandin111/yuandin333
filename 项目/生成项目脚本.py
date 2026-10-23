@@ -16,30 +16,32 @@ backend_bat = r'''@echo off
 chcp 936 >nul
 cd /d "%~dp0"
 
-REM ===== 1. 自愈：补回缺失的 maven 包装器配置 =====
+REM ===== 1. Self-heal: make sure maven wrapper config exists =====
+REM (NOTE: keep this file pure ASCII! Chinese chars in .bat can break cmd parsing
+REM  with "error: unexpected token" and kill the script before maven even runs.)
 if not exist ".mvn\wrapper\maven-wrapper.properties" (
     if not exist ".mvn\wrapper" md ".mvn\wrapper"
     > .mvn\wrapper\maven-wrapper.properties echo distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.16/apache-maven-3.9.16-bin.zip
 )
 
-REM ===== 2. 清掉 IDE 注入的 SERVER__PORT，防止端口被劫持到 52242 =====
+REM ===== 2. Clear IDE-injected SERVER__PORT so 8081 wins =====
 set "SERVER__PORT="
 
-REM ===== 3. 尽力初始化数据库(幂等；需 MySQL 已启动) =====
+REM ===== 3. Init database (idempotent; needs MySQL running) =====
 set "MYSQLBIN="
 if exist "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" set "MYSQLBIN=C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
 if not defined MYSQLBIN if exist "C:\Program Files (x86)\MySQL\MySQL Server 8.0\bin\mysql.exe" set "MYSQLBIN=C:\Program Files (x86)\MySQL\MySQL Server 8.0\bin\mysql.exe"
 if defined MYSQLBIN (
-    echo [1/3] 初始化数据库 springboot_test ...
+    echo [1/3] Init database springboot_test ...
     "%MYSQLBIN%" -uroot -p123456 < "%~dp0sql\springboot_test.sql" 2>nul
 ) else (
-    echo [提示] 未找到 mysql 客户端，跳过初始化(若数据库已存在则无影响)。
+    echo [note] mysql client not found, skip db init.
 )
 
-REM ===== 4. 启动后端(强制 8081；target 每次重启会被删，这里会重新构建) =====
-echo [2/3] 正在构建并启动 Spring Boot 后端(端口 8081)，首次需下载依赖请稍候...
+REM ===== 4. Start backend, force port 8081 =====
+echo [2/3] Building and starting Spring Boot backend on port 8081, first run may take 1-2 min...
 call mvnw.cmd spring-boot:run -Dspring-boot.run.arguments=--server.port=8081
-echo [3/3] 后端已退出。
+echo [3/3] Backend exited.
 pause
 '''
 
