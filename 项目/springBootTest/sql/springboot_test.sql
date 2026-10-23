@@ -13,9 +13,8 @@ CREATE DATABASE IF NOT EXISTS springboot_test
 
 USE springboot_test;
 
--- 用户表
-DROP TABLE IF EXISTS sys_user;
-CREATE TABLE sys_user (
+-- 用户表（幂等：已存在则跳过，不会清空已有数据）
+CREATE TABLE IF NOT EXISTS sys_user (
     id          BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     username    VARCHAR(50)  NOT NULL COMMENT '用户名',
     email       VARCHAR(100) DEFAULT NULL COMMENT '邮箱',
@@ -29,6 +28,6 @@ CREATE TABLE sys_user (
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci COMMENT ='用户表';
 
--- 插入测试数据（密码为 123456 的 MD5 值）
-INSERT INTO sys_user (username, email, password, create_time, update_time)
+-- 插入测试数据（密码为 123456 的 MD5 值；INSERT IGNORE 保证重复执行不会覆盖/报错）
+INSERT IGNORE INTO sys_user (username, email, password, create_time, update_time)
 VALUES ('admin', 'admin@test.com', 'e10adc3949ba59abbe56e057f20f883e', NOW(), NOW());
