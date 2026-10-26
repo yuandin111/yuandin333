@@ -1,5 +1,6 @@
 package com.fenglin.springboottest.controller;
 
+import com.fenglin.springboottest.common.AuthTokens;
 import com.fenglin.springboottest.common.Result;
 import com.fenglin.springboottest.entity.User;
 import com.fenglin.springboottest.service.UserService;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -65,9 +67,54 @@ public class AuthController {
         }
 
         Map<String, Object> data = new HashMap<>();
-        data.put("token", UUID.randomUUID().toString().replace("-", ""));
+        data.put("token", AuthTokens.create(user));
         data.put("user", user);
         return Result.success("登录成功", data);
+    }
+
+    /**
+     * 后台管理系统登录：仅允许 role = admin 的账号
+     * 请求体：{"username": "xxx", "password": "xxx"}
+     */
+    @PostMapping("/admin-login")
+    public Result<Map<String, Object>> adminLogin(@RequestBody Map<String, String> body) {
+        String username = body.get("username");
+        String password = body.get("password");
+        if (username == null || username.isBlank() || password == null || password.isBlank()) {
+            return Result.error(400, "用户名和密码不能为空");
+        }
+
+        User user = userService.login(username.trim(), password);
+        if (user == null) {
+            return Result.error(401, "用户名或密码错误");
+        }
+        if (!"admin".equals(user.getRole())) {
+            return Result.error(403, "该账号不是管理员，无法进入后台");
+        }
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("token", AuthTokens.create(user));
+        data.put("user", user);
+        return Result.success("登录成功", data);
+    }
+
+    /**
+     * 注销：使 token 立即失效
+     * 请求头：Authorization: Bearer <token>
+     */
+    @PostMapping("/logout")
+    public Result<Void> logout(@RequestHeader(value = "Authorization", required = false) String authorization) {
+        AuthTokens.remove(extractToken(authorization));
+        return Result.success("已退出登录", null);
+    }
+
+    /** 从 Authorization 头中提取 token（支持 "Bearer xxx" 或裸 token） */
+    public static String extractToken(String authorization) {
+        if (authorization == null || authorization.isBlank()) {
+            return null;
+        }
+        String value = authorization.trim();
+        return value.regionMatches(true, 0, "Bearer ", 0, 7) ? value.substring(7).trim() : value;
     }
 
     /**
@@ -133,7 +180,7 @@ public class AuthController {
         }
 
         Map<String, Object> data = new HashMap<>();
-        data.put("token", UUID.randomUUID().toString().replace("-", ""));
+        data.put("token", AuthTokens.create(user));
         data.put("user", user);
         return Result.success("注册成功", data);
     }

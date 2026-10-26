@@ -26,6 +26,9 @@ public class User {
     /** 密码（MD5 加密存储） */
     private String password;
 
+    /** 角色：admin 管理员 / user 普通用户 */
+    private String role;
+
     /** 创建时间 */
     private LocalDateTime createTime;
 

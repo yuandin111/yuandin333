@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-// 后端地址：在 .env 里配置 VITE_API_BASE，例如 http://localhost:3000/api
+// 后端地址：在 .env 里配置 VITE_API_BASE，例如 http://localhost:8081/api
 // 未配置时走演示模式（模拟请求），方便本地直接预览
 const BASE = import.meta.env.VITE_API_BASE || ''
 
@@ -8,6 +8,20 @@ const client = axios.create({
   baseURL: BASE,
   timeout: 8000,
   headers: { 'Content-Type': 'application/json' }
+})
+
+// 后台管理专用请求实例：自动携带管理员 token
+const adminClient = axios.create({
+  baseURL: BASE,
+  timeout: 8000,
+  headers: { 'Content-Type': 'application/json' }
+})
+adminClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('admin_token')
+  if (token) {
+    config.headers.Authorization = 'Bearer ' + token
+  }
+  return config
 })
 
 /**
@@ -24,6 +38,28 @@ export async function login({ username, password }) {
 
   const { data } = await client.post('/auth/login', { username, password })
   return data
+}
+
+/**
+ * 后台管理系统登录（仅管理员）
+ * @param {{ username: string, password: string }} payload
+ * @returns {Promise<{ code: number, message: string, data: { token: string, user: any } }>}
+ */
+export async function adminLogin({ username, password }) {
+  const { data } = await client.post('/auth/admin-login', { username, password })
+  if (data.code !== 200) {
+    throw new Error(data.message || '登录失败')
+  }
+  return data.data
+}
+
+/** 注销后台登录（使 token 失效，失败也不影响本地清理） */
+export async function adminLogout() {
+  try {
+    await adminClient.post('/auth/logout')
+  } catch (e) {
+    /* 忽略网络错误，本地照常清理 */
+  }
 }
 
 /**
@@ -59,4 +95,49 @@ export async function register({ username, captchaId, code, password }) {
   return data
 }
 
-export default { login, fetchCaptcha, register }
+// ==================== 首页内容公开查询 ====================
+
+/**
+ * 查询首页展示数据
+ * @param {'characters'|'tools'|'events'} type
+ * @returns {Promise<Array>} 失败时抛异常，调用方自行回退本地数据
+ */
+export async function fetchContent(type) {
+  const { data } = await client.get('/' + type)
+  if (data.code !== 200) {
+    throw new Error(data.message || '查询失败')
+  }
+  return data.data || []
+}
+
+// ==================== 后台管理 CRUD ====================
+
+/**
+ * 后台管理通用请求
+ * @param {'characters'|'tools'|'events'} type
+ * @param {'list'|'create'|'update'|'remove'} action
+ * @param {object} [payload] create/update 时的表单数据，update/remove 时 payload.id 必填
+ */
+export async function adminApi(type, action, payload) {
+  let resp
+  if (action === 'list') {
+    resp = await adminClient.get(`/admin/${type}`)
+  } else if (action === 'create') {
+    resp = await adminClient.post(`/admin/${type}`, payload)
+  } else if (action === 'update') {
+    resp = await adminClient.put(`/admin/${type}/${payload.id}`, payload)
+  } else if (action === 'remove') {
+    resp = await adminClient.delete(`/admin/${type}/${payload.id}`)
+  } else {
+    throw new Error('未知操作: ' + action)
+  }
+  const data = resp.data
+  if (data.code !== 200) {
+    const err = new Error(data.message || '操作失败')
+    err.code = data.code
+    throw err
+  }
+  return data.data
+}
+
+export default { login, adminLogin, adminLogout, fetchCaptcha, register, fetchContent, adminApi }

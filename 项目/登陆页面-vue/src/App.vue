@@ -3,11 +3,14 @@ import { onMounted, ref } from 'vue'
 import LoginCard from './components/LoginCard.vue'
 import RegisterCard from './components/RegisterCard.vue'
 import HomePage from './components/HomePage.vue'
+import AdminLogin from './components/AdminLogin.vue'
+import AdminPage from './components/AdminPage.vue'
 
-// 视图状态：login = 登录/注册页，home = 首页
+// 视图状态：login = 登录/注册页，home = 首页，admin-login = 后台登录页，admin = 后台管理系统
 const view = ref('login')
 const mode = ref('login')
 const user = ref('')
+const adminUser = ref('')
 
 const stars = ref([])
 
@@ -24,9 +27,14 @@ onMounted(() => {
   }
   stars.value = arr
 
-  // 已登录（token 还在）则刷新后直接进入首页
+  // 已登录（token 还在）则刷新后直接进入对应页面
+  const adminToken = localStorage.getItem('admin_token')
   const token = localStorage.getItem('token')
-  if (token) {
+  if (adminToken) {
+    adminUser.value = localStorage.getItem('admin_user') || 'admin'
+    user.value = localStorage.getItem('user') || 'User'
+    view.value = 'admin'
+  } else if (token) {
     user.value = localStorage.getItem('user') || 'User'
     view.value = 'home'
   }
@@ -47,6 +55,32 @@ const onLogout = () => {
   user.value = ''
   view.value = 'login'
   mode.value = 'login'
+}
+
+// 首页点击"后台管理"：已有后台会话直接进入，否则去后台登录页
+const goAdmin = () => {
+  if (localStorage.getItem('admin_token')) {
+    adminUser.value = localStorage.getItem('admin_user') || 'admin'
+    view.value = 'admin'
+  } else {
+    view.value = 'admin-login'
+  }
+}
+
+// 后台登录成功：保存管理员 token 并进入后台
+const onAdminLoginSuccess = ({ name, token }) => {
+  localStorage.setItem('admin_token', token)
+  localStorage.setItem('admin_user', name)
+  adminUser.value = name
+  view.value = 'admin'
+}
+
+// 退出后台：仅清除后台会话，回到首页
+const onAdminLogout = () => {
+  localStorage.removeItem('admin_token')
+  localStorage.removeItem('admin_user')
+  adminUser.value = ''
+  view.value = localStorage.getItem('token') ? 'home' : 'login'
 }
 </script>
 
@@ -77,7 +111,17 @@ const onLogout = () => {
 
   <!-- 首页 -->
   <div v-if="view === 'home'" class="home-view">
-    <HomePage :user="user" @logout="onLogout" />
+    <HomePage :user="user" @logout="onLogout" @admin="goAdmin" />
+  </div>
+
+  <!-- 后台管理系统 -->
+  <div v-else-if="view === 'admin'" class="admin-view">
+    <AdminPage :user="adminUser" @logout="onAdminLogout" @expired="view = 'admin-login'" @home="view = 'home'" />
+  </div>
+
+  <!-- 后台登录页 -->
+  <div v-else-if="view === 'admin-login'" class="login-view">
+    <AdminLogin @success="onAdminLoginSuccess" @back="view = 'home'" />
   </div>
 
   <!-- 登录 / 注册 -->
@@ -177,5 +221,11 @@ const onLogout = () => {
   z-index: 2;
   height: 100vh;
   overflow-y: auto;
+}
+.admin-view {
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  overflow: hidden;
 }
 </style>

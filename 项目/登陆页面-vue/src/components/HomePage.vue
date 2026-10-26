@@ -1,11 +1,12 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { fetchContent } from '../services/auth.js'
 
 const props = defineProps({
   // 登录用户名，由 App.vue 传入
   user: { type: String, default: 'User' }
 })
-const emit = defineEmits(['logout'])
+const emit = defineEmits(['logout', 'admin'])
 
 const initial = () => (props.user || 'U').trim().charAt(0).toUpperCase()
 
@@ -28,8 +29,8 @@ const showResults = ref(false)
 const searchBox = ref(null)
 const hotTags = ['五条悟', '虎杖悠仁', '两面宿傩', '天逆鉾', '渋谷事变', '死灭回游']
 
-// ================= 人物数据 =================
-const characters = [
+// ================= 人物数据（本地兜底，优先使用后端数据） =================
+const localCharacters = [
   {
     id: 'yuji', icon: '👊', name: '虎杖悠仁', role: '东京校一年级', camp: 'school',
     ability: '超人体质 · 宿傩容器', tags: ['主角', '容器'],
@@ -112,8 +113,8 @@ const characters = [
   }
 ]
 
-// ================= 咒具数据 =================
-const tools = [
+// ================= 咒具数据（本地兜底，优先使用后端数据） =================
+const localTools = [
   {
     id: 'sakahoko', icon: '🗡️', name: '天逆鉾', grade: '特级咒具', gradeClass: 'top',
     owner: '伏黑甚尔 → 被五条悟没收封印',
@@ -151,8 +152,8 @@ const tools = [
   }
 ]
 
-// ================= 事件时间线 =================
-const events = [
+// ================= 事件时间线（本地兜底，优先使用后端数据） =================
+const localEvents = [
   {
     id: 'e1', era: '约千年以前', title: '咒术全盛时代 · 宿傩之死',
     desc: '诅咒之王两面宿傩横行于世，死后化为二十根手指散落千年，成为咒术界最高机密——特级咒物。'
@@ -187,25 +188,53 @@ const events = [
   }
 ]
 
-// ================= 概览统计 =================
-const stats = [
-  { label: '收录人物', value: '16' },
-  { label: '咒具词条', value: '7' },
-  { label: '事件节点', value: '8' },
+// ================= 页面数据：默认用本地兜底数据，挂载后从后端拉取覆盖 =================
+const characters = ref(localCharacters)
+const tools = ref(localTools)
+const events = ref(localEvents)
+
+// 后端 tags 是逗号分隔字符串，统一转成数组
+const normalizeTags = (list) =>
+  list.map((c) => ({
+    ...c,
+    tags: Array.isArray(c.tags) ? c.tags : String(c.tags || '').split(/[,，、]/).filter(Boolean)
+  }))
+
+onMounted(async () => {
+  try {
+    const [chars, tls, evts] = await Promise.all([
+      fetchContent('characters'),
+      fetchContent('tools'),
+      fetchContent('events')
+    ])
+    if (chars.length) characters.value = normalizeTags(chars)
+    if (tls.length) tools.value = tls
+    if (evts.length) events.value = evts
+  } catch (e) {
+    // 后端未启动时静默回退到本地数据，页面照常可用
+    console.warn('内容接口不可用，已使用本地兜底数据：', e.message)
+  }
+})
+
+// ================= 概览统计（跟随数据自动更新） =================
+const stats = computed(() => [
+  { label: '收录人物', value: String(characters.value.length) },
+  { label: '咒具词条', value: String(tools.value.length) },
+  { label: '事件节点', value: String(events.value.length) },
   { label: '传说跨度', value: '1000+年' }
-]
+])
 
 // ================= 搜索逻辑（前端本地过滤） =================
 const searchIndex = computed(() => [
-  ...characters.map((c) => ({
+  ...characters.value.map((c) => ({
     ...c, kind: '人物',
     text: [c.name, c.role, c.ability, c.desc, ...(c.tags || [])].join(' ')
   })),
-  ...tools.map((t) => ({
+  ...tools.value.map((t) => ({
     ...t, kind: '咒具',
     text: [t.name, t.grade, t.owner, t.desc].join(' ')
   })),
-  ...events.map((e) => ({
+  ...events.value.map((e) => ({
     ...e, kind: '事件',
     text: [e.era, e.title, e.desc].join(' ')
   }))
@@ -325,6 +354,7 @@ onBeforeUnmount(() => {
     </nav>
 
     <div class="user-area">
+      <button class="admin-btn" title="进入后台管理系统" @click="emit('admin')">🛠️ 后台管理</button>
       <span class="bell" title="通知">🔔</span>
       <span class="avatar">{{ initial() }}</span>
       <span class="uname">{{ user }}</span>
@@ -638,6 +668,21 @@ onBeforeUnmount(() => {
   color: #ff8fb1;
   border-color: rgba(255, 92, 168, 0.5);
   box-shadow: 0 0 12px rgba(255, 92, 168, 0.25);
+}
+.admin-btn {
+  padding: 7px 14px;
+  border: 1px solid rgba(42, 209, 255, 0.45);
+  border-radius: 8px;
+  background: rgba(42, 209, 255, 0.08);
+  color: var(--c3);
+  cursor: pointer;
+  font-size: 13px;
+  transition: color 0.25s, border-color 0.25s, box-shadow 0.25s, background 0.25s;
+}
+.admin-btn:hover {
+  background: rgba(42, 209, 255, 0.16);
+  border-color: rgba(42, 209, 255, 0.7);
+  box-shadow: 0 0 14px rgba(42, 209, 255, 0.35);
 }
 
 /* ---------- 主视觉 + 搜索栏 ---------- */

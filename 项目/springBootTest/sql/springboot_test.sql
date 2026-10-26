@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS sys_user (
     username    VARCHAR(50)  NOT NULL COMMENT '用户名',
     email       VARCHAR(100) DEFAULT NULL COMMENT '邮箱',
     password    VARCHAR(100) NOT NULL COMMENT '密码（MD5加密）',
+    role        VARCHAR(20)  NOT NULL DEFAULT 'user' COMMENT '角色：admin管理员 / user普通用户',
     create_time DATETIME     DEFAULT NULL COMMENT '创建时间',
     update_time DATETIME     DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (id),
@@ -29,5 +30,6 @@ CREATE TABLE IF NOT EXISTS sys_user (
   COLLATE = utf8mb4_general_ci COMMENT ='用户表';
 
 -- 插入测试数据（密码为 123456 的 MD5 值；INSERT IGNORE 保证重复执行不会覆盖/报错）
-INSERT IGNORE INTO sys_user (username, email, password, create_time, update_time)
-VALUES ('admin', 'admin@test.com', 'e10adc3949ba59abbe56e057f20f883e', NOW(), NOW());
+-- 全新部署时，请再执行 sql/upgrade_admin_20261026.sql 以创建后台管理所需的内容表与种子数据
+INSERT IGNORE INTO sys_user (username, email, password, role, create_time, update_time)
+VALUES ('admin', 'admin@test.com', 'e10adc3949ba59abbe56e057f20f883e', 'admin', NOW(), NOW());
