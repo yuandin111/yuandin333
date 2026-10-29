@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import LoginCard from './components/LoginCard.vue'
 import RegisterCard from './components/RegisterCard.vue'
 import HomePage from './components/HomePage.vue'
@@ -11,6 +11,10 @@ const view = ref('login')
 const mode = ref('login')
 const user = ref('')
 const adminUser = ref('')
+// 当前登录用户的权限：0 = 管理员权限，1 = 默认权限（普通用户）
+const permission = ref(1)
+// 是否管理员：仅 permission = 0 可见后台入口并登录后台
+const isAdmin = computed(() => permission.value === 0)
 
 const stars = ref([])
 
@@ -30,6 +34,8 @@ onMounted(() => {
   // 已登录（token 还在）则刷新后直接进入对应页面
   const adminToken = localStorage.getItem('admin_token')
   const token = localStorage.getItem('token')
+  // 刷新后恢复权限标记，缺省按默认权限（普通用户）处理
+  permission.value = localStorage.getItem('permission') === '0' ? 0 : 1
   if (adminToken) {
     adminUser.value = localStorage.getItem('admin_user') || 'admin'
     user.value = localStorage.getItem('user') || 'User'
@@ -40,10 +46,13 @@ onMounted(() => {
   }
 })
 
-// 登录成功：保存 token 并跳转首页
-const onLoginSuccess = ({ name, token }) => {
+// 登录成功：保存 token 与权限，并跳转首页
+const onLoginSuccess = ({ name, token, permission: perm }) => {
   localStorage.setItem('token', token || 'demo-token')
   localStorage.setItem('user', name)
+  // 仅 0 视为管理员权限，其余（含缺省）一律按默认权限处理
+  permission.value = perm === 0 ? 0 : 1
+  localStorage.setItem('permission', String(permission.value))
   user.value = name
   view.value = 'home'
 }
@@ -52,6 +61,8 @@ const onLoginSuccess = ({ name, token }) => {
 const onLogout = () => {
   localStorage.removeItem('token')
   localStorage.removeItem('user')
+  localStorage.removeItem('permission')
+  permission.value = 1
   user.value = ''
   view.value = 'login'
   mode.value = 'login'
@@ -59,6 +70,8 @@ const onLogout = () => {
 
 // 首页点击"后台管理"：已有后台会话直接进入，否则去后台登录页
 const goAdmin = () => {
+  // 非管理员权限（permission != 0）直接拦截，不允许进入后台登录页
+  if (permission.value !== 0) return
   if (localStorage.getItem('admin_token')) {
     adminUser.value = localStorage.getItem('admin_user') || 'admin'
     view.value = 'admin'
@@ -111,7 +124,7 @@ const onAdminLogout = () => {
 
   <!-- 首页 -->
   <div v-if="view === 'home'" class="home-view">
-    <HomePage :user="user" @logout="onLogout" @admin="goAdmin" />
+    <HomePage :user="user" :is-admin="isAdmin" @logout="onLogout" @admin="goAdmin" />
   </div>
 
   <!-- 后台管理系统 -->

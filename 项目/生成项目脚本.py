@@ -124,7 +124,7 @@ notes = r'''==================== 登陆页面-vue + springBootTest 启动备忘 
   - 前端 登陆页面-vue：Vue3 + Vite + axios，端口 5173，无自己的数据库
   - 后端 springBootTest：Spring Boot 3.4.5 + MyBatis-Plus 3.5.7 + MySQL，端口 8081
   - 数据库：本地 MySQL 8.0(localhost:3306)，库 springboot_test，表 sys_user
-  - 测试账号：admin / 123456(密码 MD5 存储)
+  - 测试账号：admin / 123456(密码明文存储；admin 为管理员权限 permission = 0)
 
 【实际路径】(注意：两个项目都在 Desktop\项目\ 下，不在桌面根)
   C:\Users\Administrator\Desktop\项目\登陆页面-vue

@@ -6,13 +6,12 @@ import com.fenglin.springboottest.entity.User;
 import com.fenglin.springboottest.mapper.UserMapper;
 import com.fenglin.springboottest.service.UserService;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 /**
  * 用户服务实现类
+ * 说明：密码明文存储、明文比对；权限统一以 User.permission 为准（0 = 管理员权限 / 1 = 默认权限）
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -36,7 +35,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = new User();
         user.setUsername(username);
         user.setEmail(hasEmail ? email.trim() : null);
-        user.setPassword(md5(password));
+        user.setPassword(password); // 明文存储
+        user.setRole("user");
+        user.setPermission(User.PERMISSION_DEFAULT); // 注册用户一律为默认权限（1）
         user.setCreateTime(LocalDateTime.now());
         user.setUpdateTime(LocalDateTime.now());
         this.save(user);
@@ -54,7 +55,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .eq(User::getEmail, account)
                 .last("limit 1"));
 
-        if (user == null || !user.getPassword().equals(md5(password))) {
+        // 密码明文比对
+        if (user == null || user.getPassword() == null || !user.getPassword().equals(password)) {
             return null;
         }
         user.setPassword(null);
@@ -62,9 +64,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
-     * MD5 加密
+     * 判断用户是否具备管理员权限（permission = 0）
      */
-    private String md5(String text) {
-        return DigestUtils.md5DigestAsHex(text.getBytes(StandardCharsets.UTF_8));
+    public static boolean isAdmin(User user) {
+        return user != null && user.getPermission() != null
+                && user.getPermission() == User.PERMISSION_ADMIN;
     }
 }

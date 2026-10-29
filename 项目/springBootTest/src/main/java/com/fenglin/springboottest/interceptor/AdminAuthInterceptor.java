@@ -2,6 +2,7 @@ package com.fenglin.springboottest.interceptor;
 
 import com.fenglin.springboottest.common.AuthTokens;
 import com.fenglin.springboottest.controller.AuthController;
+import com.fenglin.springboottest.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
@@ -11,7 +12,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 后台管理接口拦截器：/api/admin/** 必须携带有效 token 且角色为 admin
+ * 后台管理接口拦截器：/api/admin/** 必须携带有效 token 且具备管理员权限（permission = 0）
  */
 @Component
 public class AdminAuthInterceptor implements HandlerInterceptor {
@@ -25,8 +26,9 @@ public class AdminAuthInterceptor implements HandlerInterceptor {
             writeError(response, 401, "未登录或登录已过期，请重新登录后台");
             return false;
         }
-        if (!"admin".equals(entry.role())) {
-            writeError(response, 403, "无权限访问后台管理接口");
+        // 仅管理员权限（permission = 0）可访问后台接口；默认权限（1）一律拒绝
+        if (entry.permission() == null || entry.permission() != User.PERMISSION_ADMIN) {
+            writeError(response, 403, "该账号不是管理员，无权限访问后台管理接口");
             return false;
         }
         // 把当前登录用户名放进 request，便于后续审计日志使用

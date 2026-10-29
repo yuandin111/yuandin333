@@ -4,7 +4,9 @@ import { fetchContent } from '../services/auth.js'
 
 const props = defineProps({
   // 登录用户名，由 App.vue 传入
-  user: { type: String, default: 'User' }
+  user: { type: String, default: 'User' },
+  // 是否管理员权限（permission = 0 时为 true）；false 则隐藏后台管理入口
+  isAdmin: { type: Boolean, default: false }
 })
 const emit = defineEmits(['logout', 'admin'])
 
@@ -354,7 +356,7 @@ onBeforeUnmount(() => {
     </nav>
 
     <div class="user-area">
-      <button class="admin-btn" title="进入后台管理系统" @click="emit('admin')">🛠️ 后台管理</button>
+      <button v-if="isAdmin" class="admin-btn" title="进入后台管理系统" @click="emit('admin')">🛠️ 后台管理</button>
       <span class="bell" title="通知">🔔</span>
       <span class="avatar">{{ initial() }}</span>
       <span class="uname">{{ user }}</span>

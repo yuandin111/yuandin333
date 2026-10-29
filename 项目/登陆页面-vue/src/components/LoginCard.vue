@@ -56,7 +56,9 @@ const submit = async () => {
     // 兼容两种返回结构：真实后端 { code, data:{ user, token } } / 演示模式 { token, user }
     const name = res?.data?.user?.username || res?.user?.name || user.value.trim()
     const token = res?.data?.token || res?.token || 'demo-token'
-    emit('success', { name, token })
+    // 权限：0 = 管理员权限（可见后台按钮、可登录后台），1 = 默认权限；缺省按默认权限处理
+    const permission = res?.data?.user?.permission ?? res?.user?.permission ?? 1
+    emit('success', { name, token, permission })
   } catch (e) {
     const text = e.response?.data?.message || '登录失败，请检查网络或账号'
     flash(text, false)

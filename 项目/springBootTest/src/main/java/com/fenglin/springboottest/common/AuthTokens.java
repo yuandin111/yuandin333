@@ -17,8 +17,8 @@ public class AuthTokens {
 
     private static final Map<String, Entry> STORE = new ConcurrentHashMap<>();
 
-    /** token 对应的登录信息 */
-    public record Entry(Long userId, String username, String role, long expireAt) {
+    /** token 对应的登录信息（permission：0 = 管理员权限 / 1 = 默认权限） */
+    public record Entry(Long userId, String username, String role, Integer permission, long expireAt) {
         public boolean expired() {
             return System.currentTimeMillis() > expireAt;
         }
@@ -29,7 +29,7 @@ public class AuthTokens {
         purgeExpired();
         String token = UUID.randomUUID().toString().replace("-", "");
         STORE.put(token, new Entry(user.getId(), user.getUsername(), user.getRole(),
-                System.currentTimeMillis() + EXPIRE_MS));
+                user.getPermission(), System.currentTimeMillis() + EXPIRE_MS));
         return token;
     }
 

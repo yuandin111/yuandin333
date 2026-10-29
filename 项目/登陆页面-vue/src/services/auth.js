@@ -32,8 +32,13 @@ adminClient.interceptors.request.use((config) => {
 export async function login({ username, password }) {
   if (!BASE) {
     // —— 演示模式：模拟网络请求 ——
+    // 无真实数据库：账号名为 admin 视为管理员权限（0），其余为默认权限（1）
+    // 需真实权限校验请配置后端地址 VITE_API_BASE
     await new Promise((r) => setTimeout(r, 1400))
-    return { token: 'demo-token', user: { name: username } }
+    return {
+      token: 'demo-token',
+      user: { name: username, permission: username === 'admin' ? 0 : 1 }
+    }
   }
 
   const { data } = await client.post('/auth/login', { username, password })
@@ -87,8 +92,9 @@ export async function fetchCaptcha() {
 export async function register({ username, captchaId, code, password }) {
   if (!BASE) {
     // —— 演示模式：模拟网络请求 ——
+    // 注册用户一律为默认权限（1），与后端规则保持一致
     await new Promise((r) => setTimeout(r, 1600))
-    return { token: 'demo-token', user: { name: username } }
+    return { token: 'demo-token', user: { name: username, permission: 1 } }
   }
 
   const { data } = await client.post('/auth/register', { username, captchaId, code, password })

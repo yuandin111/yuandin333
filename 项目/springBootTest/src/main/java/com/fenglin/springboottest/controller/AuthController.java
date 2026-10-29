@@ -73,7 +73,7 @@ public class AuthController {
     }
 
     /**
-     * 后台管理系统登录：仅允许 role = admin 的账号
+     * 后台管理系统登录：仅允许 permission = 0（管理员权限）的账号
      * 请求体：{"username": "xxx", "password": "xxx"}
      */
     @PostMapping("/admin-login")
@@ -88,7 +88,8 @@ public class AuthController {
         if (user == null) {
             return Result.error(401, "用户名或密码错误");
         }
-        if (!"admin".equals(user.getRole())) {
+        // 仅管理员权限（permission = 0）可进入后台；默认权限（1）一律拒绝
+        if (user.getPermission() == null || user.getPermission() != User.PERMISSION_ADMIN) {
             return Result.error(403, "该账号不是管理员，无法进入后台");
         }
 
