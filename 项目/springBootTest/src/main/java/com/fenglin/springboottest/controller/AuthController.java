@@ -2,6 +2,7 @@ package com.fenglin.springboottest.controller;
 
 import com.fenglin.springboottest.common.AuthTokens;
 import com.fenglin.springboottest.common.Result;
+import com.fenglin.springboottest.common.TokenUtils;
 import com.fenglin.springboottest.entity.User;
 import com.fenglin.springboottest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,13 +110,9 @@ public class AuthController {
         return Result.success("已退出登录", null);
     }
 
-    /** 从 Authorization 头中提取 token（支持 "Bearer xxx" 或裸 token） */
+    /** 从 Authorization 头中提取 token（支持 "Bearer xxx" 或裸 token），实现见 common.TokenUtils */
     public static String extractToken(String authorization) {
-        if (authorization == null || authorization.isBlank()) {
-            return null;
-        }
-        String value = authorization.trim();
-        return value.regionMatches(true, 0, "Bearer ", 0, 7) ? value.substring(7).trim() : value;
+        return TokenUtils.extractToken(authorization);
     }
 
     /**

@@ -5,16 +5,19 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fenglin.springboottest.entity.User;
 import com.fenglin.springboottest.mapper.UserMapper;
 import com.fenglin.springboottest.service.UserService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 /**
  * 用户服务实现类
- * 说明：密码明文存储、明文比对；权限统一以 User.permission 为准（0 = 管理员权限 / 1 = 默认权限）
+ * 说明：密码 BCrypt 加密存储（旧明文密码在首次登录时自动升级为密文）；权限统一以 User.permission 为准（0 = 管理员权限 / 1 = 默认权限）
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+
+    private static final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
 
     @Override
     public User register(String username, String email, String password) {
@@ -35,7 +38,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user = new User();
         user.setUsername(username);
         user.setEmail(hasEmail ? email.trim() : null);
-        user.setPassword(password); // 明文存储
+        user.setPassword(ENCODER.encode(password));
         user.setRole("user");
         user.setPermission(User.PERMISSION_DEFAULT); // 注册用户一律为默认权限（1）
         user.setCreateTime(LocalDateTime.now());
@@ -55,8 +58,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 .eq(User::getEmail, account)
                 .last("limit 1"));
 
-        // 密码明文比对
-        if (user == null || user.getPassword() == null || !user.getPassword().equals(password)) {
+        if (user == null || password == null) {
+            return null;
+        }
+        String stored = user.getPassword();
+        boolean matched;
+        if (stored != null && (stored.startsWith("$2a$") || stored.startsWith("$2b$"))) {
+            // 已加密：直接校验
+            matched = ENCODER.matches(password, stored);
+        } else {
+            // 旧版明文：比对通过后就地升级为 BCrypt（一次性迁移，下次登录即走加密分支）
+            matched = password.equals(stored);
+            if (matched && stored != null) {
+                user.setPassword(ENCODER.encode(password));
+                this.updateById(user);
+            }
+        }
+        if (!matched) {
             return null;
         }
         user.setPassword(null);

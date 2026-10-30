@@ -1,7 +1,7 @@
 package com.fenglin.springboottest.interceptor;
 
 import com.fenglin.springboottest.common.AuthTokens;
-import com.fenglin.springboottest.controller.AuthController;
+import com.fenglin.springboottest.common.TokenUtils;
 import com.fenglin.springboottest.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +19,7 @@ public class AdminAuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        String token = AuthController.extractToken(request.getHeader("Authorization"));
+        String token = TokenUtils.extractToken(request.getHeader("Authorization"));
         AuthTokens.Entry entry = AuthTokens.get(token);
 
         if (entry == null) {

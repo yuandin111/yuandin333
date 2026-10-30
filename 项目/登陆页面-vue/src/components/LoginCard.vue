@@ -103,13 +103,6 @@ const submit = async () => {
 
       <div class="msg" :class="{ show: !!msg, ok: msgOk }">{{ msg }}</div>
 
-      <div class="divider">或使用以下方式</div>
-      <div class="social">
-        <button type="button">微信</button>
-        <button type="button">GitHub</button>
-        <button type="button">Google</button>
-      </div>
-
       <div class="switch">
         还没有账号？<a href="#" @click.prevent="emit('switch', 'register')">创建账户</a>
       </div>
@@ -364,42 +357,6 @@ h1 {
 }
 .msg.ok {
   color: #4fe39a;
-}
-
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--muted);
-  font-size: 12px;
-  margin: 22px 0 16px;
-}
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--line);
-}
-.social {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-}
-.social button {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text);
-  cursor: pointer;
-  font-size: 13px;
-  transition: background 0.2s, transform 0.15s;
-}
-.social button:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: translateY(-2px);
 }
 
 .switch {
