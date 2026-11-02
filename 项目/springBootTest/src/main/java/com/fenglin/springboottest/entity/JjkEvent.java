@@ -24,6 +24,9 @@ public class JjkEvent {
     /** 事件标题 */
     private String title;
 
+    /** 配图 URL（/uploads/xxx.png 或完整 http 地址），为空时前端不显示缩略图 */
+    private String imageUrl;
+
     /** 详细介绍（数据库列 description，前后端 JSON 字段为 desc） */
     @JsonProperty("desc")
     private String description;

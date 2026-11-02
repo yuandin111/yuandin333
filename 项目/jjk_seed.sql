@@ -4,7 +4,9 @@
 -- 表：jjk_character / jjk_tool / jjk_event
 -- 字段对齐后端实体 JjkCharacter / JjkTool / JjkEvent
 --   （desc 字段在库中列名为 description，id 自增，含 sort 排序）
+-- 2026-11-02 图文升级：三表均新增 image_url 列（配图 URL，空则前端回退 emoji）
 -- 说明：DROP 仅为保证脚本可重复执行，三张表均为新增表，无数据风险
+-- 注意：本脚本不含 CREATE DATABASE 与 sys_user 登录表，需先建库并另跑 sql/springboot_test.sql
 -- ============================================================
 
 USE springboot_test;
@@ -16,6 +18,7 @@ CREATE TABLE jjk_character (
   id            BIGINT       NOT NULL AUTO_INCREMENT,
   name          VARCHAR(50)  NOT NULL,
   icon          VARCHAR(16)  DEFAULT NULL,
+  image_url     VARCHAR(255) DEFAULT NULL,
   role          VARCHAR(100) DEFAULT NULL,
   camp          VARCHAR(20)  DEFAULT NULL,
   ability       VARCHAR(200) DEFAULT NULL,
@@ -51,6 +54,7 @@ CREATE TABLE jjk_tool (
   id            BIGINT       NOT NULL AUTO_INCREMENT,
   name          VARCHAR(50)  NOT NULL,
   icon          VARCHAR(16)  DEFAULT NULL,
+  image_url     VARCHAR(255) DEFAULT NULL,
   grade         VARCHAR(50)  DEFAULT NULL,
   grade_class   VARCHAR(20)  DEFAULT NULL,
   owner         VARCHAR(200) DEFAULT NULL,
@@ -76,6 +80,7 @@ CREATE TABLE jjk_event (
   id            BIGINT       NOT NULL AUTO_INCREMENT,
   era           VARCHAR(50)  DEFAULT NULL,
   title         VARCHAR(100) NOT NULL,
+  image_url     VARCHAR(255) DEFAULT NULL,
   description   TEXT,
   sort          INT          DEFAULT 0,
   create_time   DATETIME     DEFAULT NULL,

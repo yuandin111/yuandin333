@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { fetchContent } from '../services/auth.js'
+import { fetchContent, search, resolveUrl } from '../services/auth.js'
 
 const props = defineProps({
   // 登录用户名，由 App.vue 传入
@@ -23,12 +23,14 @@ const scrollTo = (id) => {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
-// ================= 搜索（纯前端演示，接口位置已预留） =================
+// ================= 搜索（后端 /api/search 跨表检索，失败回退本地过滤） =================
 const keyword = ref('')
 const searching = ref(false)
 const tip = ref('')
 const showResults = ref(false)
 const searchBox = ref(null)
+// 后端检索结果；null 表示未走后端（演示模式或接口异常），用本地过滤兜底
+const remoteResults = ref(null)
 const hotTags = ['五条悟', '虎杖悠仁', '两面宿傩', '天逆鉾', '渋谷事变', '死灭回游']
 
 // ================= 人物数据（本地兜底，优先使用后端数据） =================
@@ -226,7 +228,59 @@ const stats = computed(() => [
   { label: '传说跨度', value: '1000+年' }
 ])
 
-// ================= 搜索逻辑（前端本地过滤） =================
+// ================= 分区筛选（数据已全量加载，纯前端即时过滤） =================
+// 人物：按阵营
+const charFilter = ref('all')
+const charFilterOptions = [
+  { value: 'all', label: '全部' },
+  { value: 'school', label: '高专' },
+  { value: 'curse', label: '咒灵 · 诅咒师' }
+]
+const filteredCharacters = computed(() =>
+  charFilter.value === 'all'
+    ? characters.value
+    : characters.value.filter((c) => c.camp === charFilter.value)
+)
+
+// 咒具：按等级样式
+const toolFilter = ref('all')
+const toolFilterOptions = [
+  { value: 'all', label: '全部' },
+  { value: 'top', label: '特级咒具' },
+  { value: 'relic', label: '特级咒物' },
+  { value: 'maybe', label: '疑似特级' },
+  { value: 'unknown', label: '等级未知' }
+]
+const filteredTools = computed(() =>
+  toolFilter.value === 'all'
+    ? tools.value
+    : tools.value.filter((t) => t.gradeClass === toolFilter.value)
+)
+
+// 时间线：按时期分组（前传时代 / 2018年 / 终局）
+const eraGroup = (era) => {
+  const s = era || ''
+  if (s.includes('2018')) return 'y2018'
+  if (s.includes('终局') || s.includes('新宿')) return 'final'
+  return 'pre'
+}
+const eraFilter = ref('all')
+const eraFilterOptions = [
+  { value: 'all', label: '全部时期' },
+  { value: 'pre', label: '前传时代' },
+  { value: 'y2018', label: '2018年' },
+  { value: 'final', label: '终局' }
+]
+const filteredEvents = computed(() =>
+  eraFilter.value === 'all'
+    ? events.value
+    : events.value.filter((e) => eraGroup(e.era) === eraFilter.value)
+)
+
+// 配图地址：相对路径（/uploads/xxx.png）拼接后端根地址
+const img = (url) => resolveUrl(url)
+
+// ================= 搜索逻辑（后端检索优先，本地过滤兜底） =================
 const searchIndex = computed(() => [
   ...characters.value.map((c) => ({
     ...c, kind: '人物',
@@ -243,12 +297,22 @@ const searchIndex = computed(() => [
 ])
 
 const results = computed(() => {
+  // 后端检索结果优先展示
+  if (remoteResults.value) return remoteResults.value
   const kw = keyword.value.trim().toLowerCase()
   if (!kw) return []
   return searchIndex.value.filter((i) => i.text.toLowerCase().includes(kw)).slice(0, 8)
 })
 
-const doSearch = () => {
+// 结果条目统一化：人物/character → char，咒具/tool → tool，其余 → event
+const kindOf = (item) => {
+  const k = item.kind || ''
+  if (k === 'character' || k === '人物') return 'char'
+  if (k === 'tool' || k === '咒具') return 'tool'
+  return 'event'
+}
+
+const doSearch = async () => {
   const kw = keyword.value.trim()
   if (!kw) {
     tip.value = '请输入搜索关键词'
@@ -258,21 +322,40 @@ const doSearch = () => {
   showResults.value = true
   searching.value = true
   tip.value = ''
-  // TODO: 接入后端检索接口（暂留前端演示逻辑）
-  setTimeout(() => {
-    searching.value = false
+  try {
+    const r = await search(kw)
+    if (r) {
+      // 后端可用：直接使用后端结果（统一结构 kind/id/name/subtitle/desc/kindLabel）
+      remoteResults.value = r
+      tip.value = r.length ? `命中 ${r.length} 条结果` : `未找到「${kw}」相关内容`
+    } else {
+      // 演示模式（未连后端）：本地过滤
+      remoteResults.value = null
+      tip.value = results.value.length
+        ? `演示环境：命中 ${results.value.length} 条结果，连上后端可全站检索`
+        : `演示环境：未找到「${kw}」相关内容`
+    }
+  } catch (e) {
+    // 后端检索接口异常时回退本地过滤，页面照常可用
+    remoteResults.value = null
     tip.value = results.value.length
-      ? `演示环境：命中 ${results.value.length} 条结果，后端检索接口待接入`
-      : `演示环境：未找到「${kw}」相关内容`
-  }, 500)
+      ? `命中 ${results.value.length} 条结果（后端检索暂不可用）`
+      : `未找到「${kw}」相关内容`
+  } finally {
+    searching.value = false
+  }
 }
 
 const pickResult = (item) => {
   showResults.value = false
-  if (item.kind === '人物') {
-    openChar(item)
-  } else if (item.kind === '咒具') {
-    openTool(item)
+  const kind = kindOf(item)
+  if (kind === 'char') {
+    // 后端结果只带 id，回当前数据里找完整对象；本地结果本身就是完整对象
+    const c = characters.value.find((x) => x.id === item.id) || item
+    openChar(c)
+  } else if (kind === 'tool') {
+    const t = tools.value.find((x) => x.id === item.id) || item
+    openTool(t)
   } else {
     scrollTo('timeline')
     highlight(item.id)
@@ -291,17 +374,51 @@ const onDocClick = (e) => {
 
 // ================= 详情弹窗 =================
 const modal = ref(null)
+
+// 与人物相关的事件：事件标题/简介中出现人物名即视为相关
+const relatedEventsOf = (c) =>
+  events.value.filter((e) => ((e.title || '') + (e.desc || '')).includes(c.name)).slice(0, 4)
+
+// 与事件相关的人物：事件文本中出现人物名
+const relatedCharsOf = (e) =>
+  characters.value.filter((c) => ((e.title || '') + (e.desc || '')).includes(c.name)).slice(0, 6)
+
 const openChar = (c) => {
+  const related = relatedEventsOf(c)
   modal.value = {
     kind: '人物', name: c.name, tag: c.role, meta: '术式 / 能力：' + c.ability,
-    desc: c.desc, extra: c.tags && c.tags.length ? '关键词：' + c.tags.join(' / ') : ''
+    desc: c.desc, image: c.imageUrl || '', icon: c.icon,
+    extra: c.tags && c.tags.length ? '关键词：' + c.tags.join(' / ') : '',
+    chipsLabel: '相关事件',
+    chips: related.map((e) => ({ id: e.id, label: e.title }))
   }
 }
 const openTool = (t) => {
   modal.value = {
     kind: '咒具', name: t.name, tag: t.grade, meta: t.owner ? '持有者：' + t.owner : '',
-    desc: t.desc, extra: ''
+    desc: t.desc, image: t.imageUrl || '', icon: t.icon, extra: ''
   }
+}
+const openEvent = (e) => {
+  const related = relatedCharsOf(e)
+  modal.value = {
+    kind: '事件', name: e.title, tag: e.era, meta: '',
+    desc: e.desc, image: e.imageUrl || '', icon: '',
+    extra: '',
+    chipsLabel: '相关人物',
+    chips: related.map((c) => ({ id: c.id, label: c.name, char: c }))
+  }
+}
+
+// 弹窗里的关联词条：人物词条打开人物弹窗；事件词条关弹窗、跳时间线并高亮
+const pickChip = (chip) => {
+  if (chip.char) {
+    openChar(chip.char)
+    return
+  }
+  closeModal()
+  scrollTo('timeline')
+  highlight(chip.id)
 }
 const closeModal = () => {
   modal.value = null
@@ -384,7 +501,7 @@ onBeforeUnmount(() => {
         <span v-else class="spinner"></span>
       </button>
 
-      <!-- 本地检索结果面板（后端接口预留） -->
+      <!-- 检索结果面板（后端跨表检索；演示/后端不可用时为本地过滤） -->
       <div v-if="showResults && results.length" class="search-panel">
         <div
           v-for="(r, i) in results"
@@ -392,9 +509,9 @@ onBeforeUnmount(() => {
           class="r-item"
           @click="pickResult(r)"
         >
-          <span class="r-kind" :class="'k-' + (r.kind === '人物' ? 'char' : r.kind === '咒具' ? 'tool' : 'event')">{{ r.kind }}</span>
+          <span class="r-kind" :class="'k-' + kindOf(r)">{{ r.kindLabel || r.kind }}</span>
           <span class="r-name">{{ r.name || r.title }}</span>
-          <span class="r-desc">{{ r.ability || r.grade || r.era }}</span>
+          <span class="r-desc">{{ r.subtitle || r.ability || r.grade || r.era }}</span>
         </div>
       </div>
     </div>
@@ -421,16 +538,28 @@ onBeforeUnmount(() => {
       <h2 class="s-title">人物志</h2>
       <p class="s-sub">术师、诅咒师与咒灵 —— 点击卡片查看详细介绍</p>
     </div>
+    <div class="filter-bar">
+      <button
+        v-for="o in charFilterOptions"
+        :key="o.value"
+        class="fchip"
+        :class="{ on: charFilter === o.value }"
+        @click="charFilter = o.value"
+      >{{ o.label }}</button>
+    </div>
     <div class="char-grid">
       <div
-        v-for="(c, i) in characters"
+        v-for="(c, i) in filteredCharacters"
         :key="i"
         class="char-card"
         @click="openChar(c)"
       >
         <span class="camp" :class="'camp-' + c.camp">{{ c.camp === 'school' ? '高专' : '咒灵 · 诅咒师' }}</span>
         <div class="c-head">
-          <span class="c-avatar">{{ c.icon }}</span>
+          <span class="c-avatar">
+            <img v-if="c.imageUrl" :src="img(c.imageUrl)" :alt="c.name" />
+            <template v-else>{{ c.icon }}</template>
+          </span>
           <div>
             <div class="c-name">{{ c.name }}</div>
             <div class="c-role">{{ c.role }}</div>
@@ -441,6 +570,7 @@ onBeforeUnmount(() => {
         <span class="c-more">查看详情 →</span>
       </div>
     </div>
+    <p v-if="!filteredCharacters.length" class="filter-empty">该阵营下暂无人物</p>
   </section>
 
   <!-- ===== 咒具图鉴 ===== -->
@@ -450,16 +580,28 @@ onBeforeUnmount(() => {
       <h2 class="s-title">咒具图鉴</h2>
       <p class="s-sub">承载咒力的武器 —— 特级咒具与特级咒物</p>
     </div>
+    <div class="filter-bar">
+      <button
+        v-for="o in toolFilterOptions"
+        :key="o.value"
+        class="fchip"
+        :class="{ on: toolFilter === o.value }"
+        @click="toolFilter = o.value"
+      >{{ o.label }}</button>
+    </div>
     <div class="tool-grid">
       <div
-        v-for="(t, i) in tools"
+        v-for="(t, i) in filteredTools"
         :key="i"
         class="tool-card"
         @click="openTool(t)"
       >
         <span class="grade" :class="'g-' + t.gradeClass">{{ t.grade }}</span>
         <div class="t-head">
-          <span class="t-icon">{{ t.icon }}</span>
+          <span class="t-icon">
+            <img v-if="t.imageUrl" :src="img(t.imageUrl)" :alt="t.name" />
+            <template v-else>{{ t.icon }}</template>
+          </span>
           <div class="t-name">{{ t.name }}</div>
         </div>
         <p class="t-owner">{{ t.owner }}</p>
@@ -467,6 +609,7 @@ onBeforeUnmount(() => {
         <span class="c-more">查看详情 →</span>
       </div>
     </div>
+    <p v-if="!filteredTools.length" class="filter-empty">该等级下暂无咒具</p>
   </section>
 
   <!-- ===== 时间线 ===== -->
@@ -476,32 +619,60 @@ onBeforeUnmount(() => {
       <h2 class="s-title">重要事件时间线</h2>
       <p class="s-sub">从千年前的宿傩传说，到新宿的终局之战</p>
     </div>
+    <div class="filter-bar">
+      <button
+        v-for="o in eraFilterOptions"
+        :key="o.value"
+        class="fchip"
+        :class="{ on: eraFilter === o.value }"
+        @click="eraFilter = o.value"
+      >{{ o.label }}</button>
+    </div>
     <div class="timeline">
       <div
-        v-for="(e, i) in events"
+        v-for="(e, i) in filteredEvents"
         :key="i"
         class="t-item"
         :class="{ hl: highlightId === e.id }"
         :id="e.id"
+        @click="openEvent(e)"
       >
-        <span class="t-era">{{ e.era }}</span>
-        <h3 class="t-title">{{ e.title }}</h3>
-        <p class="t-desc">{{ e.desc }}</p>
+        <span class="t-num">{{ String(i + 1).padStart(2, '0') }}</span>
+        <img v-if="e.imageUrl" :src="img(e.imageUrl)" :alt="e.title" class="t-thumb" />
+        <div class="t-body">
+          <span class="t-era">{{ e.era }}</span>
+          <h3 class="t-title">{{ e.title }}</h3>
+          <p class="t-desc">{{ e.desc }}</p>
+          <span class="c-more">查看详情 →</span>
+        </div>
       </div>
     </div>
+    <p v-if="!filteredEvents.length" class="filter-empty">该时期下暂无事件</p>
   </section>
 
-  <footer class="foot">咒术回战资料站 · 前端演示页面 — 后端接口已保留，数据陆续接入</footer>
+  <footer class="foot">咒术回战资料站 — 数据来自后端接口（未连接时展示内置演示数据）</footer>
 
   <!-- ===== 详情弹窗 ===== -->
   <div v-if="modal" class="modal-mask" @click.self="closeModal">
     <div class="modal">
       <button class="m-close" @click="closeModal">×</button>
+      <div v-if="modal.image" class="m-image">
+        <img :src="img(modal.image)" :alt="modal.name" />
+      </div>
       <div class="m-tag">{{ modal.kind }} · {{ modal.tag }}</div>
       <h3 class="m-name">{{ modal.name }}</h3>
       <p v-if="modal.meta" class="m-meta">{{ modal.meta }}</p>
       <p class="m-desc">{{ modal.desc }}</p>
       <p v-if="modal.extra" class="m-extra">{{ modal.extra }}</p>
+      <div v-if="modal.chips && modal.chips.length" class="m-chips">
+        <span class="m-chips-label">{{ modal.chipsLabel }}：</span>
+        <button
+          v-for="chip in modal.chips"
+          :key="chip.id"
+          class="m-chip"
+          @click="pickChip(chip)"
+        >{{ chip.label }}</button>
+      </div>
     </div>
   </div>
 </template>
@@ -941,6 +1112,41 @@ onBeforeUnmount(() => {
   margin-top: 10px;
 }
 
+/* ---------- 分区筛选条 ---------- */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.fchip {
+  padding: 6px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.fchip:hover {
+  color: var(--text);
+  border-color: rgba(42, 209, 255, 0.4);
+}
+.fchip.on {
+  color: var(--c3);
+  border-color: rgba(42, 209, 255, 0.6);
+  background: rgba(42, 209, 255, 0.12);
+  box-shadow: 0 0 10px rgba(42, 209, 255, 0.2);
+}
+.filter-empty {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 18px 0 6px;
+}
+
 /* ---------- 人物卡片 ---------- */
 .char-grid {
   display: grid;
@@ -993,6 +1199,13 @@ onBeforeUnmount(() => {
   font-size: 24px;
   background: rgba(42, 209, 255, 0.1);
   border: 1px solid rgba(42, 209, 255, 0.25);
+  overflow: hidden;
+}
+.c-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 13px;
 }
 .c-name {
   font-size: 16px;
@@ -1078,6 +1291,13 @@ onBeforeUnmount(() => {
   font-size: 22px;
   background: rgba(255, 209, 102, 0.1);
   border: 1px solid rgba(255, 209, 102, 0.25);
+  overflow: hidden;
+}
+.t-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
 }
 .t-name {
   font-size: 16px;
@@ -1116,6 +1336,9 @@ onBeforeUnmount(() => {
 }
 .t-item {
   position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
   margin: 0 0 22px 44px;
   padding: 18px 22px;
   background: var(--card);
@@ -1123,7 +1346,33 @@ onBeforeUnmount(() => {
   border-radius: 14px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  transition: border-color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.t-item:hover {
+  border-color: rgba(42, 209, 255, 0.4);
+  transform: translateX(4px);
+}
+.t-num {
+  flex-shrink: 0;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: 1px;
+  color: rgba(42, 209, 255, 0.22);
+  user-select: none;
+}
+.t-thumb {
+  flex-shrink: 0;
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+.t-body {
+  flex: 1;
+  min-width: 0;
 }
 .t-item::before {
   content: '';
@@ -1239,6 +1488,49 @@ onBeforeUnmount(() => {
   margin-top: 16px;
   font-size: 12px;
   color: var(--muted);
+}
+
+/* ---------- 弹窗配图 ---------- */
+.m-image {
+  margin: -4px 0 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.m-image img {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+}
+
+/* ---------- 弹窗关联词条（相关事件 / 相关人物） ---------- */
+.m-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+}
+.m-chips-label {
+  font-size: 12px;
+  color: var(--muted);
+}
+.m-chip {
+  padding: 5px 12px;
+  border: 1px solid rgba(42, 209, 255, 0.4);
+  border-radius: 999px;
+  background: rgba(42, 209, 255, 0.08);
+  color: var(--c3);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.m-chip:hover {
+  background: rgba(42, 209, 255, 0.18);
+  box-shadow: 0 0 10px rgba(42, 209, 255, 0.25);
 }
 
 /* ---------- 页脚 ---------- */

@@ -24,6 +24,9 @@ public class JjkTool {
     /** 图标 emoji */
     private String icon;
 
+    /** 配图 URL（/uploads/xxx.png 或完整 http 地址），为空时前端回退显示 emoji */
+    private String imageUrl;
+
     /** 等级文字，如：特级咒具 */
     private String grade;
 

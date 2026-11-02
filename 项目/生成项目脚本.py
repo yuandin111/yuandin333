@@ -6,8 +6,9 @@
 """
 import os
 
-DESKTOP = r"C:\Users\Administrator\Desktop"
-ROOT = os.path.join(DESKTOP, "项目")   # 两个项目实际都放在 Desktop\项目\ 下
+# 项目根目录：两个子项目都在 <根>\项目\ 下（2026-11-02 起实际位于 D:\workSpace\yuandin333\项目）
+ROOT_PARENT = r"D:\workSpace\yuandin333"
+ROOT = os.path.join(ROOT_PARENT, "项目")
 BACKEND = os.path.join(ROOT, "springBootTest")
 FRONTEND = os.path.join(ROOT, "登陆页面-vue")
 
@@ -126,10 +127,11 @@ notes = r'''==================== 登陆页面-vue + springBootTest 启动备忘 
   - 数据库：本地 MySQL 8.0(localhost:3306)，库 springboot_test，表 sys_user
   - 测试账号：admin / 123456(密码明文存储；admin 为管理员权限 permission = 0)
 
-【实际路径】(注意：两个项目都在 Desktop\项目\ 下，不在桌面根)
-  C:\Users\Administrator\Desktop\项目\登陆页面-vue
-  C:\Users\Administrator\Desktop\项目\springBootTest
-  重新生成脚本的 生成项目脚本.py 也在 Desktop\项目\ 里，直接 python 生成项目脚本.py 即可。
+【实际路径】(2026-11-02 起项目从桌面搬到了 D 盘)
+  D:\workSpace\yuandin333\项目\登陆页面-vue
+  D:\workSpace\yuandin333\项目\springBootTest
+  一键启动/暂停脚本生成在 D:\workSpace\yuandin333\ 下(项目的上一级)
+  重新生成脚本的 生成项目脚本.py 也在 项目\ 里，直接 python 生成项目脚本.py 即可。
 
 【端口】前端 5173 / 后端 8081 / MySQL 3306
 
@@ -177,6 +179,29 @@ notes = r'''==================== 登陆页面-vue + springBootTest 启动备忘 
 【登录自测】
   curl -X POST http://localhost:8081/api/auth/login -H "Content-Type: application/json" -d "{\"username\":\"admin\",\"password\":\"123456\"}"
   成功 {"code":200,...,"token":...}；错误密码返回 code:401。
+
+【2026-11-02 新增功能：站内检索 / 图文上传 / 分区筛选 / 时间线完善】
+  - 数据库迁移(三张内容表加 image_url 列)：springBootTest\sql\upgrade_image_url_20261102.sql
+    幂等可重复执行，2026-11-02 已跑过一次。全新建库顺序：先跑 sql\springboot_test.sql(用户表)、
+    再跑 项目根\jjk_seed.sql(内容数据，已含 image_url 列)。
+    注意：jjk_seed.sql 含 DROP TABLE，会清空后台改过的内容数据——只在需要重置内容时手动跑，
+    启动脚本【不会】自动执行它(防止每次重启丢掉管理员编辑)。
+  - 新增后端接口：
+    GET /api/search?q=关键词   站内跨表检索(人物/咒具/事件，公开)
+    GET /api/characters?camp=school|curse   人物可选筛选
+    GET /api/tools?gradeClass=top|relic|maybe|unknown   咒具可选筛选
+    GET /api/events?era=xxx    事件可选筛选
+    POST /api/admin/upload     图片上传(multipart 字段名 file，需管理员 token，
+                               返回 {"url":"/uploads/xxx.png"}，文件存 springBootTest\uploads\)
+    图片访问：http://localhost:8081/uploads/xxx.png (CorsConfig 里注册了 file:uploads/ 映射)
+    限制：png/jpg/jpeg/gif/webp，单文件 5MB(application.properties 的 multipart 配置)
+  - 前端：首页搜索已连后端 /api/search(后端不可用自动回退本地过滤)；
+    人物/咒具/时间线三个分区加了筛选 chips；人物弹窗带「相关事件」、事件弹窗带「相关人物」
+    (按人名出现在事件文本里自动关联)；时间线卡片带序号、可配图、点击进详情；
+    后台三个表单都能上传配图(字段 imageUrl)，没图时首页回退 emoji 图标。
+  - 自测过的坑：spring-boot:run 带 devtools 会 fork 出独立 java 进程，mvn 父进程显示
+    BUILD SUCCESS 退出但后端其实还在跑；停后端别看 mvn 窗口，要按端口杀：
+    netstat -ano | findstr :8081 → taskkill /f /t /pid <pid>。
 ================================================================================
 '''
 
@@ -190,8 +215,8 @@ def w(path, data, enc):
 
 
 # 脚本(GBK，配合 chcp 936)
-w(os.path.join(DESKTOP, "启动项目.bat"), start_bat, "gbk")
-w(os.path.join(DESKTOP, "暂停项目.bat"), stop_bat, "gbk")
+w(os.path.join(ROOT_PARENT, "启动项目.bat"), start_bat, "gbk")
+w(os.path.join(ROOT_PARENT, "暂停项目.bat"), stop_bat, "gbk")
 w(os.path.join(BACKEND, "启动后端.bat"), backend_bat, "gbk")
 w(os.path.join(FRONTEND, "启动前端.bat"), frontend_bat, "gbk")
 # 备忘(UTF-8 BOM，记事本可直接看)

@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
-import { adminApi, adminLogout } from '../services/auth.js'
+import { adminApi, adminLogout, uploadImage, resolveUrl } from '../services/auth.js'
 
 const props = defineProps({
   // 当前登录的管理员用户名
@@ -24,6 +24,7 @@ const sections = [
     fields: [
       { key: 'name', label: '人物名', required: true },
       { key: 'icon', label: '图标 emoji', placeholder: '例如：😎' },
+      { key: 'imageUrl', label: '配图（人物头像/立绘）', type: 'file' },
       { key: 'role', label: '身份 / 称号', placeholder: '例如：特级咒术师 · 教师' },
       {
         key: 'camp', label: '阵营', type: 'select', options: [
@@ -36,7 +37,7 @@ const sections = [
       { key: 'desc', label: '详细介绍', type: 'textarea' },
       { key: 'sort', label: '排序（越小越靠前）', type: 'number' }
     ],
-    defaults: { name: '', icon: '', role: '', camp: 'school', ability: '', tags: '', desc: '', sort: 0 }
+    defaults: { name: '', icon: '', imageUrl: '', role: '', camp: 'school', ability: '', tags: '', desc: '', sort: 0 }
   },
   {
     key: 'tools',
@@ -52,6 +53,7 @@ const sections = [
     fields: [
       { key: 'name', label: '咒具名', required: true },
       { key: 'icon', label: '图标 emoji', placeholder: '例如：🗡️' },
+      { key: 'imageUrl', label: '配图（咒具图片）', type: 'file' },
       { key: 'grade', label: '等级文字', placeholder: '例如：特级咒具' },
       {
         key: 'gradeClass', label: '等级样式', type: 'select', options: [
@@ -65,7 +67,7 @@ const sections = [
       { key: 'desc', label: '详细介绍', type: 'textarea' },
       { key: 'sort', label: '排序（越小越靠前）', type: 'number' }
     ],
-    defaults: { name: '', icon: '', grade: '', gradeClass: 'unknown', owner: '', desc: '', sort: 0 }
+    defaults: { name: '', icon: '', imageUrl: '', grade: '', gradeClass: 'unknown', owner: '', desc: '', sort: 0 }
   },
   {
     key: 'events',
@@ -80,10 +82,11 @@ const sections = [
     fields: [
       { key: 'era', label: '时代 / 时间', required: true, placeholder: '例如：2018 · 10月31日' },
       { key: 'title', label: '事件标题', required: true },
+      { key: 'imageUrl', label: '配图（事件场景图）', type: 'file' },
       { key: 'desc', label: '详细介绍', type: 'textarea' },
       { key: 'sort', label: '排序（越小越靠前）', type: 'number' }
     ],
-    defaults: { era: '', title: '', desc: '', sort: 0 }
+    defaults: { era: '', title: '', imageUrl: '', desc: '', sort: 0 }
   }
 ]
 
@@ -198,6 +201,33 @@ const removeRow = async (row) => {
   }
 }
 
+// ==================== 图片上传 ====================
+const uploading = ref(false)
+// 相对地址（/uploads/xxx.png）→ 后端完整地址
+const img = (url) => resolveUrl(url)
+
+const onFileChange = async (e) => {
+  const file = e.target.files && e.target.files[0]
+  if (!file) return
+  if (uploading.value) return
+  uploading.value = true
+  try {
+    const { url } = await uploadImage(file)
+    form.imageUrl = url
+    showToast('图片上传成功')
+  } catch (err) {
+    handleError(err)
+  } finally {
+    uploading.value = false
+    // 重置 input，允许再次选择同一张图
+    e.target.value = ''
+  }
+}
+
+const clearImage = () => {
+  form.imageUrl = ''
+}
+
 // ==================== 退出后台 ====================
 const onLogout = async () => {
   await adminLogout()
@@ -263,7 +293,11 @@ onMounted(load)
             <tr v-for="row in rows" :key="row.id">
               <td v-for="c in active.columns" :key="c.key">
                 <template v-if="c.key === 'name'">
-                  <span class="cell-name"><span class="cell-icon">{{ row.icon }}</span>{{ row.name }}</span>
+                  <span class="cell-name">
+                    <img v-if="row.imageUrl" class="cell-img" :src="img(row.imageUrl)" :alt="row.name" />
+                    <span v-else class="cell-icon">{{ row.icon }}</span>
+                    {{ row.name }}
+                  </span>
                 </template>
                 <template v-else-if="c.type === 'camp'">
                   <span class="pill" :class="row.camp === 'school' ? 'pill-cyan' : 'pill-red'">
@@ -311,6 +345,25 @@ onMounted(load)
               <option v-for="o in f.options" :key="o.value" :value="o.value">{{ o.label }}</option>
             </select>
             <textarea v-else-if="f.type === 'textarea'" v-model="form[f.key]" rows="4" :placeholder="f.placeholder || ''"></textarea>
+            <div v-else-if="f.type === 'file'" class="file-field">
+              <div class="img-preview">
+                <img v-if="form.imageUrl" :src="img(form.imageUrl)" alt="预览" />
+                <span v-else class="img-placeholder">暂无配图（首页将回退显示 emoji 图标）</span>
+              </div>
+              <div class="file-actions">
+                <label class="file-btn" :class="{ busy: uploading }">
+                  {{ uploading ? '上传中…' : '选择图片' }}
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/gif,image/webp"
+                    :disabled="uploading"
+                    @change="onFileChange"
+                  />
+                </label>
+                <button v-if="form.imageUrl" type="button" class="file-clear" @click="clearImage">移除</button>
+              </div>
+              <p class="file-hint">支持 png / jpg / gif / webp，最大 5MB；上传后立即生效并随表单保存</p>
+            </div>
             <input v-else-if="f.type === 'number'" v-model="form[f.key]" type="number" :placeholder="f.placeholder || '0'" />
             <input v-else v-model="form[f.key]" type="text" :placeholder="f.placeholder || ''" />
           </label>
@@ -504,6 +557,86 @@ onMounted(load)
 .table tbody tr:hover { background: rgba(42, 209, 255, 0.05); }
 .cell-name { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; white-space: nowrap; }
 .cell-icon { font-size: 18px; }
+.cell-img {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+}
+
+/* ---------- 图片上传字段 ---------- */
+.file-field {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.img-preview {
+  display: grid;
+  place-items: center;
+  min-height: 96px;
+  border: 1px dashed var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+}
+.img-preview img {
+  width: 100%;
+  max-height: 160px;
+  object-fit: contain;
+  display: block;
+}
+.img-placeholder {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 10px;
+  text-align: center;
+}
+.file-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.file-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid rgba(42, 209, 255, 0.45);
+  border-radius: 8px;
+  background: rgba(42, 209, 255, 0.08);
+  color: var(--c3);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.file-btn:hover {
+  background: rgba(42, 209, 255, 0.16);
+  box-shadow: 0 0 12px rgba(42, 209, 255, 0.3);
+}
+.file-btn.busy {
+  opacity: 0.6;
+  cursor: wait;
+}
+.file-btn input[type='file'] {
+  display: none;
+}
+.file-clear {
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 92, 168, 0.45);
+  border-radius: 8px;
+  background: transparent;
+  color: #ff8fb1;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.file-clear:hover {
+  background: rgba(255, 92, 168, 0.12);
+}
+.file-hint {
+  font-size: 11px;
+  color: var(--muted);
+}
 .ellipsis {
   display: -webkit-box;
   -webkit-line-clamp: 2;

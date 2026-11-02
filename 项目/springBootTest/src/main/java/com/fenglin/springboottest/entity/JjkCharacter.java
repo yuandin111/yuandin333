@@ -24,6 +24,9 @@ public class JjkCharacter {
     /** 图标 emoji */
     private String icon;
 
+    /** 配图 URL（/uploads/xxx.png 或完整 http 地址），为空时前端回退显示 emoji */
+    private String imageUrl;
+
     /** 身份/称号 */
     private String role;
 

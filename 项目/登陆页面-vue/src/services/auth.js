@@ -104,16 +104,67 @@ export async function register({ username, captchaId, code, password }) {
 // ==================== 首页内容公开查询 ====================
 
 /**
- * 查询首页展示数据
+ * 查询首页展示数据（支持可选筛选参数）
  * @param {'characters'|'tools'|'events'} type
+ * @param {object} [params] 可选筛选：characters→{camp}，tools→{gradeClass}，events→{era}
  * @returns {Promise<Array>} 失败时抛异常，调用方自行回退本地数据
  */
-export async function fetchContent(type) {
-  const { data } = await client.get('/' + type)
+export async function fetchContent(type, params) {
+  const { data } = await client.get('/' + type, { params: params || {} })
   if (data.code !== 200) {
     throw new Error(data.message || '查询失败')
   }
   return data.data || []
+}
+
+// ==================== 站内检索（后端跨表 LIKE） ====================
+
+/**
+ * 站内检索人物 / 咒具 / 事件
+ * @param {string} q 关键词
+ * @returns {Promise<Array<{kind,id,name,subtitle,desc,kindLabel}>|null>}
+ *          演示模式（未配置后端）返回 null，调用方走本地过滤兜底
+ */
+export async function search(q) {
+  if (!BASE) return null
+  const { data } = await client.get('/search', { params: { q } })
+  if (data.code !== 200) {
+    throw new Error(data.message || '检索失败')
+  }
+  return data.data || []
+}
+
+/**
+ * 把后端返回的相对地址（如 /uploads/xxx.png）拼成完整可访问地址
+ * 完整 http(s) 地址原样返回；演示模式下原样返回
+ */
+export function resolveUrl(url) {
+  if (!url) return ''
+  if (/^https?:\/\//i.test(url)) return url
+  // BASE 形如 http://localhost:8081/api，去掉末尾 /api 得到后端根地址
+  const origin = (BASE || '').replace(/\/api\/?$/, '')
+  return origin ? origin + url : url
+}
+
+// ==================== 后台图片上传 ====================
+
+/**
+ * 上传图片（需管理员 token，后端 /api/admin/** 有拦截器鉴权）
+ * @param {File} file 浏览器文件对象
+ * @returns {Promise<{url: string}>} 如 { url: '/uploads/xxx.png' }
+ */
+export async function uploadImage(file) {
+  const fd = new FormData()
+  fd.append('file', file)
+  const { data } = await adminClient.post('/admin/upload', fd, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  })
+  if (data.code !== 200) {
+    const err = new Error(data.message || '上传失败')
+    err.code = data.code
+    throw err
+  }
+  return data.data
 }
 
 // ==================== 后台管理 CRUD ====================
@@ -146,4 +197,4 @@ export async function adminApi(type, action, payload) {
   return data.data
 }
 
-export default { login, adminLogin, adminLogout, fetchCaptcha, register, fetchContent, adminApi }
+export default { login, adminLogin, adminLogout, fetchCaptcha, register, fetchContent, search, resolveUrl, uploadImage, adminApi }
