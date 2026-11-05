@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { fetchContent, search, resolveUrl } from '../services/auth.js'
+import GachaCard from './GachaCard.vue'
 
 const props = defineProps({
   // 登录用户名，由 App.vue 传入
@@ -15,6 +16,7 @@ const initial = () => (props.user || 'U').trim().charAt(0).toUpperCase()
 // ================= 顶部导航（锚点跳转，单页内滚动） =================
 const menus = [
   { label: '首页', id: 'top', active: true },
+  { label: '祈愿', id: 'gacha' },
   { label: '人物志', id: 'characters' },
   { label: '咒具图鉴', id: 'tools' },
   { label: '时间线', id: 'timeline' }
@@ -481,6 +483,9 @@ onBeforeUnmount(() => {
     </div>
   </header>
 
+  <!-- ===== 咒力祈愿（抽奖模块，置于页面顶端） ===== -->
+  <GachaCard />
+
   <!-- ===== 主视觉区：欢迎语 + 搜索栏 ===== -->
   <main class="hero" id="top">
     <p class="eyebrow">// WELCOME BACK, 咒术师</p>
@@ -864,7 +869,7 @@ onBeforeUnmount(() => {
   z-index: 2;
   max-width: 780px;
   margin: 0 auto;
-  padding: 158px 24px 54px;
+  padding: 40px 24px 54px;
   text-align: center;
 }
 .eyebrow {
@@ -1553,7 +1558,7 @@ onBeforeUnmount(() => {
   .char-grid { grid-template-columns: repeat(2, 1fr); }
   .stats { grid-template-columns: repeat(2, 1fr); }
   .hero h1 { font-size: 28px; }
-  .hero { padding-top: 120px; }
+  .hero { padding-top: 36px; }
   .uname { display: none; }
 }
 @media (max-width: 560px) {

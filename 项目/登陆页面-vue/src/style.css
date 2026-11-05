@@ -1,12 +1,13 @@
 :root {
-  --c1: #6a5cff;
-  --c2: #ff5ca8;
-  --c3: #2ad1ff;
-  --bg: #0d1027;
-  --card: rgba(255, 255, 255, 0.08);
-  --line: rgba(255, 255, 255, 0.18);
-  --text: #f2f4ff;
-  --muted: rgba(242, 244, 255, 0.6);
+  /* ===== 咒术回战 · 主题色板 ===== */
+  --c1: #7b2ff7; /* 咒力紫 */
+  --c2: #e8336e; /* 咒骸绯红 */
+  --c3: #38d9ff; /* 六眼青 */
+  --bg: #0b0616; /* 深夜咒界 */
+  --card: rgba(26, 15, 52, 0.6);
+  --line: rgba(167, 139, 250, 0.28);
+  --text: #f3edff;
+  --muted: rgba(226, 214, 255, 0.62);
 }
 
 * {
@@ -22,7 +23,10 @@ body {
 
 body {
   font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-  background: var(--bg);
+  background:
+    radial-gradient(1200px 800px at 80% -10%, rgba(123, 47, 247, 0.12), transparent 60%),
+    radial-gradient(1000px 700px at 10% 110%, rgba(232, 51, 110, 0.1), transparent 60%),
+    var(--bg);
   color: var(--text);
   overflow: hidden;
   position: relative;

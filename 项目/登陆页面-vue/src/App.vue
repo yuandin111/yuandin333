@@ -17,6 +17,8 @@ const permission = ref(1)
 const isAdmin = computed(() => permission.value === 0)
 
 const stars = ref([])
+// 飘落御札（符咒）装饰
+const talismans = ref([])
 
 onMounted(() => {
   const arr = []
@@ -26,10 +28,25 @@ onMounted(() => {
       top: Math.random() * 100 + 'vh',
       dur: 3 + Math.random() * 4 + 's',
       delay: Math.random() * 4 + 's',
-      size: 1 + Math.random() * 2.5 + 'px'
+      size: 1 + Math.random() * 2.5 + 'px',
+      hue: Math.random() > 0.5 ? '#ffffff' : Math.random() > 0.5 ? '#c4b5fd' : '#7dd3fc'
     })
   }
   stars.value = arr
+
+  // 生成 6 张御札：随机水平位置 / 下落时长 / 延迟 / 尺寸 / 旋转
+  const tal = []
+  for (let i = 0; i < 6; i++) {
+    tal.push({
+      left: 4 + Math.random() * 92 + 'vw',
+      dur: 14 + Math.random() * 12 + 's',
+      delay: -Math.random() * 20 + 's',
+      scale: 0.75 + Math.random() * 0.5,
+      sway: 2.4 + Math.random() * 2.6 + 's',
+      char: ['封', '呪', '結', '印', '祓', '界'][i]
+    })
+  }
+  talismans.value = tal
 
   // 已登录（token 还在）则刷新后直接进入对应页面
   const adminToken = localStorage.getItem('admin_token')
@@ -105,7 +122,7 @@ const onAdminLogout = () => {
     <div class="blob b3"></div>
   </div>
 
-  <!-- 动态背景：闪烁星点 -->
+  <!-- 动态背景：闪烁星点（咒力微尘） -->
   <div class="stars">
     <span
       v-for="(s, i) in stars"
@@ -116,10 +133,57 @@ const onAdminLogout = () => {
         top: s.top,
         '--dur': s.dur,
         '--delay': s.delay,
+        '--star-c': s.hue,
         width: s.size,
         height: s.size
       }"
     ></span>
+  </div>
+
+  <!-- 登录/后台登录视图专属：领域展开法阵 + 飘落御札 + 竖排题字 -->
+  <div v-if="view === 'login' || view === 'admin-login'" class="jjk-scene" aria-hidden="true">
+    <!-- 领域展开法阵 -->
+    <div class="domain">
+      <svg class="domain-svg" viewBox="0 0 600 600">
+        <circle cx="300" cy="300" r="292" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="4 10" />
+        <circle cx="300" cy="300" r="268" fill="none" stroke="currentColor" stroke-width="1.2" />
+        <circle cx="300" cy="300" r="238" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="26 8" />
+        <circle cx="300" cy="300" r="150" fill="none" stroke="currentColor" stroke-width="1.5" />
+        <circle cx="300" cy="300" r="120" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 8" />
+        <rect x="188" y="188" width="224" height="224" fill="none" stroke="currentColor" stroke-width="1.2" />
+        <rect x="188" y="188" width="224" height="224" fill="none" stroke="currentColor" stroke-width="1" transform="rotate(45 300 300)" />
+        <line x1="300" y1="8" x2="300" y2="112" stroke="currentColor" stroke-width="1" />
+        <line x1="300" y1="488" x2="300" y2="592" stroke="currentColor" stroke-width="1" />
+        <line x1="8" y1="300" x2="112" y2="300" stroke="currentColor" stroke-width="1" />
+        <line x1="488" y1="300" x2="592" y2="300" stroke="currentColor" stroke-width="1" />
+        <g fill="currentColor" font-size="17" font-family="serif" opacity="0.9">
+          <text x="300" y="42" text-anchor="middle">呪</text>
+          <text x="300" y="572" text-anchor="middle">術</text>
+          <text x="28" y="306" text-anchor="middle">廻</text>
+          <text x="572" y="306" text-anchor="middle">戦</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- 飘落御札 -->
+    <div
+      v-for="(t, i) in talismans"
+      :key="'t' + i"
+      class="talisman"
+      :style="{
+        left: t.left,
+        '--fall': t.dur,
+        '--fall-delay': t.delay,
+        '--sway': t.sway,
+        transform: `scale(${t.scale})`
+      }"
+    >
+      <span class="talisman-char">{{ t.char }}</span>
+    </div>
+
+    <!-- 竖排题字 -->
+    <div class="side-title left">呪術廻戦</div>
+    <div class="side-title right">JUJUTSU<br />KAISEN</div>
   </div>
 
   <!-- 首页 -->
@@ -201,9 +265,10 @@ const onAdminLogout = () => {
 }
 .star {
   position: absolute;
-  background: #fff;
+  background: var(--star-c, #fff);
   border-radius: 50%;
   opacity: 0.8;
+  box-shadow: 0 0 6px var(--star-c, #fff);
   animation: twinkle var(--dur, 4s) ease-in-out infinite;
   animation-delay: var(--delay, 0s);
 }
@@ -219,6 +284,138 @@ const onAdminLogout = () => {
   }
 }
 
+/* ================= 咒术场景装饰（登录视图专属） ================= */
+.jjk-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* 领域展开法阵 */
+.domain {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(88vmin, 760px);
+  height: min(88vmin, 760px);
+  transform: translate(-50%, -50%);
+  color: rgba(167, 139, 250, 0.34);
+  filter: drop-shadow(0 0 18px rgba(123, 47, 247, 0.28));
+}
+.domain-svg {
+  width: 100%;
+  height: 100%;
+  animation: domainSpin 90s linear infinite;
+}
+@keyframes domainSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 飘落御札 */
+.talisman {
+  position: absolute;
+  top: -140px;
+  width: 26px;
+  height: 92px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #efe6c8 0%, #e6d9b2 78%, #d9c896 100%);
+  box-shadow: 0 0 14px rgba(232, 51, 110, 0.18);
+  border: 1px solid rgba(120, 96, 40, 0.35);
+  animation: talismanFall var(--fall, 18s) linear infinite;
+  animation-delay: var(--fall-delay, 0s);
+}
+.talisman::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 3px;
+  right: 3px;
+  height: 14px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #c0392b, #e8336e);
+  opacity: 0.85;
+}
+.talisman-char {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding-top: 14px;
+  font-family: "Songti SC", "SimSun", serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #3a1d13;
+  animation: talismanSway var(--sway, 3s) ease-in-out infinite alternate;
+}
+@keyframes talismanFall {
+  0% {
+    top: -140px;
+    opacity: 0;
+  }
+  6% {
+    opacity: 0.85;
+  }
+  94% {
+    opacity: 0.85;
+  }
+  100% {
+    top: 108vh;
+    opacity: 0;
+  }
+}
+@keyframes talismanSway {
+  from {
+    transform: rotate(-14deg) translateX(-7px);
+  }
+  to {
+    transform: rotate(14deg) translateX(7px);
+  }
+}
+
+/* 竖排题字 */
+.side-title {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  writing-mode: vertical-rl;
+  font-family: "Songti SC", "SimSun", serif;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 22px;
+  color: rgba(196, 181, 253, 0.4);
+  text-shadow:
+    0 0 18px rgba(123, 47, 247, 0.55),
+    0 0 44px rgba(123, 47, 247, 0.3);
+  animation: titleBreath 5s ease-in-out infinite;
+}
+.side-title.left {
+  left: clamp(16px, 6vw, 90px);
+}
+.side-title.right {
+  right: clamp(16px, 6vw, 90px);
+  font-size: 15px;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: 10px;
+  color: rgba(125, 211, 252, 0.35);
+  text-shadow: 0 0 16px rgba(56, 217, 255, 0.4);
+  text-align: center;
+  line-height: 2.4;
+}
+@keyframes titleBreath {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 /* 两个视图层：登录页整体居中，首页可纵向滚动 */
 .login-view {
   position: relative;
@@ -228,6 +425,7 @@ const onAdminLogout = () => {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  padding: 24px 12px;
 }
 .home-view {
   position: relative;
@@ -240,5 +438,30 @@ const onAdminLogout = () => {
   z-index: 2;
   height: 100vh;
   overflow: hidden;
+}
+
+/* ===== 移动端适配 ===== */
+@media (max-width: 760px) {
+  .side-title {
+    display: none;
+  }
+  .domain {
+    width: 130vmin;
+    height: 130vmin;
+    opacity: 0.75;
+  }
+  /* 注册卡片较高时允许滚动，避免内容被裁切 */
+  .login-view {
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .domain-svg,
+  .talisman,
+  .talisman-char,
+  .side-title {
+    animation: none;
+  }
 }
 </style>
