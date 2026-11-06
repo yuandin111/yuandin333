@@ -160,6 +160,9 @@ notes = r'''==================== 登陆页面-vue + springBootTest 启动备忘 
    if not exist ".env" ( ... ) 这类括号代码块解析失败 -> .env 建不出来 -> 前端静默降级为
    "演示模式"(假登录，压根不请求后端)，表现就是"启动脚本失效"。
    生成脚本.py 里已用 encoding="gbk", newline="\r\n" 保证，别再用普通写入工具改这两个 bat。
+   另：用 VS Code / IDEA 打开这些 .bat 显示乱码是【正常的】，它们是 GBK 而非 UTF-8；
+   项目根目录的 .vscode/settings.json 与 .idea/encodings.xml 已按语言指定 .bat = GBK。
+   不要为了"看着不乱码"就另存为 UTF-8，否则 cmd 里的中文提示和中文路径会解析失败。
 6) vite 只在启动时读 .env，改完 .env 必须重启 dev server 才生效。
    验证是否生效：curl http://localhost:5173/src/services/auth.js | head
    看到 "VITE_API_BASE":"http://localhost:8081/api" 才算真的连上后端。

@@ -1,0 +1,10 @@
+{
+  // 项目源码、SQL、Vue 全部是 UTF-8
+  "files.encoding": "utf8",
+  "files.autoGuessEncoding": true,
+  // Windows 批处理的中文是 GBK（脚本内 chcp 936），必须单独指定，
+  // 否则用 UTF-8 打开会显示乱码。切勿把这些 .bat 另存为 UTF-8。
+  "[bat]": {
+    "files.encoding": "gbk"
+  }
+}

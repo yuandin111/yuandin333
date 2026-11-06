@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { fetchContent, search, resolveUrl } from '../services/auth.js'
 import GachaCard from './GachaCard.vue'
 
@@ -13,17 +13,50 @@ const emit = defineEmits(['logout', 'admin'])
 
 const initial = () => (props.user || 'U').trim().charAt(0).toUpperCase()
 
-// ================= 顶部导航（锚点跳转，单页内滚动） =================
-const menus = [
-  { label: '首页', id: 'top', active: true },
-  { label: '祈愿', id: 'gacha' },
-  { label: '人物志', id: 'characters' },
-  { label: '咒具图鉴', id: 'tools' },
-  { label: '时间线', id: 'timeline' }
-]
-const scrollTo = (id) => {
+// ================= 视图切换：资料首页 / 祈愿页（祈愿是独立页面，不在首页出现） =================
+const page = ref('home') // 'home' | 'gacha'
+
+const scrollContainer = () => document.querySelector('.home-view')
+const scrollToTop = () => scrollContainer()?.scrollTo({ top: 0, behavior: 'auto' })
+const scrollToEl = (id) => {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
+
+// 顶部导航：首页内用锚点滚动；「祈愿」切到独立页面
+const goHome = () => {
+  page.value = 'home'
+  scrollToTop()
+}
+const scrollTo = (id) => {
+  if (id === 'gacha') {
+    page.value = 'gacha'
+    scrollToTop()
+    return
+  }
+  if (page.value !== 'home') {
+    page.value = 'home'
+    // 等首页 DOM 渲染完成后再定位分区
+    nextTick(() => scrollToEl(id))
+    return
+  }
+  scrollToEl(id)
+}
+
+const menus = computed(() => [
+  { label: '首页', id: 'top', active: page.value === 'home' },
+  { label: '祈愿', id: 'gacha', active: page.value === 'gacha' },
+  { label: '人物志', id: 'characters', active: false },
+  { label: '咒具图鉴', id: 'tools', active: false },
+  { label: '时间线', id: 'timeline', active: false }
+])
+
+// 首屏快捷入口：只做跳转，不改变任何业务逻辑
+const quickLinks = [
+  { id: 'gacha', label: '咒力祈愿', icon: '✦' },
+  { id: 'characters', label: '人物志', icon: '👤' },
+  { id: 'tools', label: '咒具图鉴', icon: '🗡️' },
+  { id: 'timeline', label: '时间线', icon: '🕰️' }
+]
 
 // ================= 搜索（后端 /api/search 跨表检索，失败回退本地过滤） =================
 const keyword = ref('')
@@ -377,6 +410,18 @@ const onDocClick = (e) => {
 // ================= 详情弹窗 =================
 const modal = ref(null)
 
+// 记住是哪个元素唤起了弹窗，关闭后把焦点还回去，键盘用户不会丢失位置
+let modalTrigger = null
+const showModal = (payload) => {
+  modalTrigger = document.activeElement
+  modal.value = payload
+  // 打开后把焦点移进弹窗，屏幕阅读器才会读到内容
+  nextTick(() => {
+    const closeBtn = document.querySelector('.modal .m-close')
+    if (closeBtn) closeBtn.focus({ preventScroll: true })
+  })
+}
+
 // 与人物相关的事件：事件标题/简介中出现人物名即视为相关
 const relatedEventsOf = (c) =>
   events.value.filter((e) => ((e.title || '') + (e.desc || '')).includes(c.name)).slice(0, 4)
@@ -387,29 +432,29 @@ const relatedCharsOf = (e) =>
 
 const openChar = (c) => {
   const related = relatedEventsOf(c)
-  modal.value = {
+  showModal({
     kind: '人物', name: c.name, tag: c.role, meta: '术式 / 能力：' + c.ability,
     desc: c.desc, image: c.imageUrl || '', icon: c.icon,
     extra: c.tags && c.tags.length ? '关键词：' + c.tags.join(' / ') : '',
     chipsLabel: '相关事件',
     chips: related.map((e) => ({ id: e.id, label: e.title }))
-  }
+  })
 }
 const openTool = (t) => {
-  modal.value = {
+  showModal({
     kind: '咒具', name: t.name, tag: t.grade, meta: t.owner ? '持有者：' + t.owner : '',
     desc: t.desc, image: t.imageUrl || '', icon: t.icon, extra: ''
-  }
+  })
 }
 const openEvent = (e) => {
   const related = relatedCharsOf(e)
-  modal.value = {
+  showModal({
     kind: '事件', name: e.title, tag: e.era, meta: '',
     desc: e.desc, image: e.imageUrl || '', icon: '',
     extra: '',
     chipsLabel: '相关人物',
     chips: related.map((c) => ({ id: c.id, label: c.name, char: c }))
-  }
+  })
 }
 
 // 弹窗里的关联词条：人物词条打开人物弹窗；事件词条关弹窗、跳时间线并高亮
@@ -424,9 +469,35 @@ const pickChip = (chip) => {
 }
 const closeModal = () => {
   modal.value = null
+  const back = modalTrigger
+  modalTrigger = null
+  // 焦点归还给唤起弹窗的卡片，Tab 不会从页面顶部重新开始
+  if (back && typeof back.focus === 'function' && document.contains(back)) {
+    nextTick(() => back.focus({ preventScroll: true }))
+  }
 }
 const onKey = (e) => {
-  if (e.key === 'Escape') closeModal()
+  if (!modal.value) return
+  if (e.key === 'Escape') {
+    closeModal()
+    return
+  }
+  // 弹窗打开时把 Tab 关在弹窗内，避免焦点跑到背后的内容上
+  if (e.key === 'Tab') {
+    const box = document.querySelector('.modal')
+    if (!box) return
+    const items = box.querySelectorAll('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')
+    if (!items.length) return
+    const first = items[0]
+    const last = items[items.length - 1]
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault()
+      last.focus()
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault()
+      first.focus()
+    }
+  }
 }
 
 // ================= 时间线高亮 =================
@@ -483,42 +554,47 @@ onBeforeUnmount(() => {
     </div>
   </header>
 
-  <!-- ===== 咒力祈愿（抽奖模块，置于页面顶端） ===== -->
-  <GachaCard />
+  <!-- ===== 首页视图：搜索 + 资料库（祈愿已移出，见下方独立视图） ===== -->
+  <template v-if="page === 'home'">
 
-  <!-- ===== 主视觉区：欢迎语 + 搜索栏 ===== -->
+  <!-- ===== 首屏：欢迎语 + 搜索（页面视觉核心） ===== -->
   <main class="hero" id="top">
     <p class="eyebrow">// WELCOME BACK, 咒术师</p>
     <h1>欢迎回来，<span class="grad">{{ user }}</span></h1>
     <p class="sub">呪術廻戦 — 进入咒术世界资料库，探索术师、咒具与重大事件</p>
 
-    <div class="search" ref="searchBox" :class="{ focus: keyword }">
-      <span class="icon">🔍</span>
-      <input
-        v-model="keyword"
-        type="text"
-        placeholder="搜索人物、咒具、事件…"
-        @keyup.enter="doSearch"
-        @focus="keyword && (showResults = true)"
-      />
-      <button class="btn" :class="{ loading: searching }" @click="doSearch">
-        <span v-if="!searching">搜 索</span>
-        <span v-else class="spinner"></span>
-      </button>
+    <!-- 搜索栏：首屏核心，进入首页优先可见 -->
+    <div class="search-core">
+      <div class="search" ref="searchBox" :class="{ focus: keyword }">
+        <span class="icon">🔍</span>
+        <input
+          v-model="keyword"
+          type="text"
+          placeholder="搜索人物、咒具、事件…"
+          aria-label="搜索人物、咒具、事件"
+          @keyup.enter="doSearch"
+          @focus="keyword && (showResults = true)"
+        />
+        <button class="btn" :class="{ loading: searching }" @click="doSearch">
+          <span v-if="!searching">搜 索</span>
+          <span v-else class="spinner"></span>
+        </button>
 
-      <!-- 检索结果面板（后端跨表检索；演示/后端不可用时为本地过滤） -->
-      <div v-if="showResults && results.length" class="search-panel">
-        <div
-          v-for="(r, i) in results"
-          :key="i"
-          class="r-item"
-          @click="pickResult(r)"
-        >
-          <span class="r-kind" :class="'k-' + kindOf(r)">{{ r.kindLabel || r.kind }}</span>
-          <span class="r-name">{{ r.name || r.title }}</span>
-          <span class="r-desc">{{ r.subtitle || r.ability || r.grade || r.era }}</span>
+        <!-- 检索结果面板（后端跨表检索；演示/后端不可用时为本地过滤） -->
+        <div v-if="showResults && results.length" class="search-panel">
+          <div
+            v-for="(r, i) in results"
+            :key="i"
+            class="r-item"
+            @click="pickResult(r)"
+          >
+            <span class="r-kind" :class="'k-' + kindOf(r)">{{ r.kindLabel || r.kind }}</span>
+            <span class="r-name">{{ r.name || r.title }}</span>
+            <span class="r-desc">{{ r.subtitle || r.ability || r.grade || r.era }}</span>
+          </div>
         </div>
       </div>
+      <p class="search-hint">回车即可检索 · 支持人物 / 咒具 / 事件跨库搜索</p>
     </div>
 
     <div class="tags">
@@ -526,6 +602,14 @@ onBeforeUnmount(() => {
       <button v-for="(t, i) in hotTags" :key="i" class="tag" @click="onTag(t)">{{ t }}</button>
     </div>
     <p v-if="tip" class="tip">{{ tip }}</p>
+
+    <!-- 首屏快捷入口：锚点跳转，移动端同样可用 -->
+    <nav class="quick-nav" aria-label="首页快捷入口">
+      <button v-for="q in quickLinks" :key="q.id" class="q-link" @click="scrollTo(q.id)">
+        <span class="q-icon" aria-hidden="true">{{ q.icon }}</span>
+        <span class="q-label">{{ q.label }}</span>
+      </button>
+    </nav>
   </main>
 
   <!-- ===== 概览统计 ===== -->
@@ -557,7 +641,12 @@ onBeforeUnmount(() => {
         v-for="(c, i) in filteredCharacters"
         :key="i"
         class="char-card"
+        role="button"
+        tabindex="0"
+        :aria-label="'查看人物详情：' + c.name"
         @click="openChar(c)"
+        @keydown.enter.prevent="openChar(c)"
+        @keydown.space.prevent="openChar(c)"
       >
         <span class="camp" :class="'camp-' + c.camp">{{ c.camp === 'school' ? '高专' : '咒灵 · 诅咒师' }}</span>
         <div class="c-head">
@@ -599,7 +688,12 @@ onBeforeUnmount(() => {
         v-for="(t, i) in filteredTools"
         :key="i"
         class="tool-card"
+        role="button"
+        tabindex="0"
+        :aria-label="'查看咒具详情：' + t.name"
         @click="openTool(t)"
+        @keydown.enter.prevent="openTool(t)"
+        @keydown.space.prevent="openTool(t)"
       >
         <span class="grade" :class="'g-' + t.gradeClass">{{ t.grade }}</span>
         <div class="t-head">
@@ -640,7 +734,12 @@ onBeforeUnmount(() => {
         class="t-item"
         :class="{ hl: highlightId === e.id }"
         :id="e.id"
+        role="button"
+        tabindex="0"
+        :aria-label="'查看事件详情：' + e.title"
         @click="openEvent(e)"
+        @keydown.enter.prevent="openEvent(e)"
+        @keydown.space.prevent="openEvent(e)"
       >
         <span class="t-num">{{ String(i + 1).padStart(2, '0') }}</span>
         <img v-if="e.imageUrl" :src="img(e.imageUrl)" :alt="e.title" class="t-thumb" />
@@ -656,11 +755,36 @@ onBeforeUnmount(() => {
   </section>
 
   <footer class="foot">咒术回战资料站 — 数据来自后端接口（未连接时展示内置演示数据）</footer>
+  </template>
+
+  <!-- ===== 祈愿视图：独立页面，仅从「祈愿」入口进入时出现，不在首页混排 ===== -->
+  <section v-if="page === 'gacha'" class="gacha-page" id="gacha">
+    <div class="gacha-page-inner">
+      <header class="zone-head">
+        <span class="zone-badge"><i class="dot"></i>EXCLUSIVE · 专属专区</span>
+        <h2 class="zone-title">咒力<span class="grad">祈愿</span></h2>
+        <p class="zone-sub">以咒力为引，召唤属于你的术师与咒灵 · 结果仅保存在本页，不影响资料库数据</p>
+      </header>
+
+      <GachaCard />
+
+      <div class="gacha-page-foot">
+        <button class="back-home" @click="goHome">← 返回首页</button>
+      </div>
+    </div>
+  </section>
 
   <!-- ===== 详情弹窗 ===== -->
-  <div v-if="modal" class="modal-mask" @click.self="closeModal">
+  <div
+    v-if="modal"
+    class="modal-mask"
+    role="dialog"
+    aria-modal="true"
+    :aria-label="modal.kind + '详情：' + modal.name"
+    @click.self="closeModal"
+  >
     <div class="modal">
-      <button class="m-close" @click="closeModal">×</button>
+      <button class="m-close" aria-label="关闭详情" @click="closeModal">×</button>
       <div v-if="modal.image" class="m-image">
         <img :src="img(modal.image)" :alt="modal.name" />
       </div>
@@ -867,9 +991,10 @@ onBeforeUnmount(() => {
 .hero {
   position: relative;
   z-index: 2;
-  max-width: 780px;
+  max-width: 860px;
   margin: 0 auto;
-  padding: 40px 24px 54px;
+  /* 顶部预留 fixed 导航高度（64px）+ 呼吸空间，避免搜索栏被遮挡 */
+  padding: 128px 24px 72px;
   text-align: center;
 }
 .eyebrow {
@@ -879,7 +1004,7 @@ onBeforeUnmount(() => {
   margin-bottom: 14px;
 }
 .hero h1 {
-  font-size: 38px;
+  font-size: 40px;
   font-weight: 700;
   letter-spacing: 1px;
 }
@@ -892,27 +1017,40 @@ onBeforeUnmount(() => {
 .sub {
   color: var(--muted);
   font-size: 15px;
-  margin: 14px 0 38px;
+  margin: 14px 0 40px;
+  text-wrap: balance;
 }
 
+/* 搜索区容器：首屏视觉重心，宽度收敛保证易扫视 */
+.search-core {
+  max-width: 720px;
+  margin: 0 auto;
+}
 .search {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--line);
+  gap: 10px;
+  padding: 8px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.035));
+  border: 1px solid rgba(167, 139, 250, 0.45);
+  box-shadow:
+    0 18px 46px rgba(6, 2, 16, 0.55),
+    0 0 0 1px rgba(56, 217, 255, 0.06),
+    0 0 42px rgba(123, 47, 247, 0.18);
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 .search:focus-within {
-  border-color: rgba(42, 209, 255, 0.6);
-  box-shadow: 0 0 0 4px rgba(42, 209, 255, 0.12), 0 0 32px rgba(42, 209, 255, 0.25);
+  border-color: rgba(56, 217, 255, 0.75);
+  box-shadow:
+    0 20px 52px rgba(6, 2, 16, 0.6),
+    0 0 0 4px rgba(56, 217, 255, 0.12),
+    0 0 44px rgba(56, 217, 255, 0.3);
 }
 .search .icon {
-  padding-left: 12px;
-  font-size: 15px;
+  padding-left: 14px;
+  font-size: 17px;
 }
 .search input {
   flex: 1;
@@ -921,8 +1059,8 @@ onBeforeUnmount(() => {
   border: none;
   outline: none;
   color: var(--text);
-  font-size: 15px;
-  padding: 12px 8px;
+  font-size: 16px;
+  padding: 14px 8px;
 }
 .search input::placeholder {
   color: var(--muted);
@@ -930,10 +1068,10 @@ onBeforeUnmount(() => {
 .search .btn {
   display: grid;
   place-items: center;
-  min-width: 96px;
-  height: 44px;
+  min-width: 112px;
+  height: 48px;
   border: none;
-  border-radius: 12px;
+  border-radius: 13px;
   cursor: pointer;
   font-size: 15px;
   font-weight: 600;
@@ -946,6 +1084,17 @@ onBeforeUnmount(() => {
 .search .btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 10px 28px rgba(42, 209, 255, 0.55);
+}
+.search .btn:focus-visible {
+  outline: 2px solid var(--c3);
+  outline-offset: 2px;
+}
+.search-hint {
+  margin-top: 12px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  opacity: 0.75;
 }
 .spinner {
   width: 18px;
@@ -1021,7 +1170,7 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 18px;
+  margin-top: 22px;
   font-size: 13px;
 }
 .tag-label {
@@ -1049,6 +1198,161 @@ onBeforeUnmount(() => {
   min-height: 16px;
 }
 
+/* ---------- 首屏快捷入口 ---------- */
+.quick-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 34px;
+}
+.q-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.q-link:hover {
+  color: var(--text);
+  border-color: rgba(56, 217, 255, 0.55);
+  background: rgba(56, 217, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(56, 217, 255, 0.16);
+}
+.q-icon {
+  font-size: 14px;
+  color: var(--c3);
+}
+
+/* ---------- 键盘可达性：深色背景下必须能看清焦点位置 ---------- */
+.tag:focus-visible,
+.fchip:focus-visible,
+.q-link:focus-visible,
+.menu a:focus-visible,
+.admin-btn:focus-visible,
+.logout:focus-visible,
+.bell:focus-visible,
+.char-card:focus-visible,
+.tool-card:focus-visible,
+.t-item:focus-visible,
+.m-close:focus-visible,
+.m-chip:focus-visible {
+  outline: 2px solid var(--c3);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* 卡片本身有 14~16px 圆角，焦点环贴着圆角走 */
+.char-card:focus-visible,
+.tool-card:focus-visible {
+  outline-offset: 3px;
+  border-radius: 16px;
+  border-color: rgba(42, 209, 255, 0.45);
+}
+.t-item:focus-visible {
+  outline-offset: 3px;
+  border-radius: 14px;
+  border-color: rgba(42, 209, 255, 0.4);
+}
+
+/* Tab / 锚点滚到卡片时让出 64px 固定导航的高度，避免焦点被导航条压住 */
+.char-card,
+.tool-card,
+.t-item {
+  scroll-margin-top: 76px;
+}
+
+/* ---------- 祈愿页（独立视图，不从属于首页内容） ---------- */
+.gacha-page {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 64px);
+  padding: 88px 0 48px;
+  background:
+    radial-gradient(760px 320px at 50% 0%, rgba(232, 51, 110, 0.14), transparent 72%),
+    radial-gradient(600px 300px at 12% 100%, rgba(123, 47, 247, 0.12), transparent 70%);
+}
+.gacha-page-inner {
+  width: 100%;
+  max-width: 1080px;
+  padding: 0 24px;
+}
+.gacha-page-foot {
+  margin-top: 32px;
+  text-align: center;
+}
+.back-home {
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.back-home:hover {
+  color: var(--text);
+  border-color: rgba(56, 217, 255, 0.55);
+  transform: translateX(-2px);
+  box-shadow: 0 8px 22px rgba(56, 217, 255, 0.14);
+}
+.back-home:focus-visible {
+  outline: 2px solid var(--c3);
+  outline-offset: 2px;
+}
+.zone-head {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.zone-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 217, 255, 0.35);
+  background: rgba(56, 217, 255, 0.08);
+  color: var(--c3);
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+.zone-badge .dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c3);
+  box-shadow: 0 0 10px var(--c3);
+  animation: badgePulse 2.4s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.8); }
+}
+.zone-title {
+  margin-top: 14px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.zone-sub {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--muted);
+  text-wrap: balance;
+}
+
 /* ---------- 概览统计 ---------- */
 .stats {
   position: relative;
@@ -1058,7 +1362,7 @@ onBeforeUnmount(() => {
   gap: 16px;
   max-width: 1080px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 72px 24px 0;
 }
 .stat {
   text-align: center;
@@ -1092,9 +1396,12 @@ onBeforeUnmount(() => {
 .section {
   position: relative;
   z-index: 2;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 64px 24px 0;
+  /* 与统计区、祈愿专区统一 1080 内容基线 */
+  max-width: 1080px;
+  /* 统一各资料区之间的垂直节奏 */
+  margin: 88px auto 0;
+  padding: 0 24px;
+  scroll-margin-top: 76px;
 }
 .s-head {
   text-align: center;
@@ -1555,14 +1862,56 @@ onBeforeUnmount(() => {
 }
 @media (max-width: 860px) {
   .menu { display: none; }
+  .nav { padding: 0 20px; }
+  /* 窄屏下禁止 logo / 用户区被压缩换行 */
+  .logo,
+  .user-area { flex-shrink: 0; white-space: nowrap; }
   .char-grid { grid-template-columns: repeat(2, 1fr); }
-  .stats { grid-template-columns: repeat(2, 1fr); }
-  .hero h1 { font-size: 28px; }
-  .hero { padding-top: 36px; }
+  .stats { grid-template-columns: repeat(2, 1fr); padding: 56px 16px 0; }
+  .hero { padding: 96px 20px 56px; }
+  .hero h1 { font-size: 30px; }
   .uname { display: none; }
+  .section { margin-top: 64px; }
+  .gacha-page { padding: 80px 0 40px; min-height: calc(100vh - 58px); }
+  .gacha-page-inner { padding: 0 16px; }
+  .zone-title { font-size: 24px; }
 }
 @media (max-width: 560px) {
+  /* 移动端导航：压缩为「图标 + 头像 + 退出」，避免文字竖排溢出 */
+  .nav { height: 58px; padding: 0 12px; }
+  .logo { gap: 6px; }
+  .logo .mark { width: 30px; height: 30px; font-size: 14px; border-radius: 8px; }
+  .logo .name { font-size: 14px; letter-spacing: 0; }
+  .logo .badge { display: none; }
+  .bell { display: none; }
+  .user-area { gap: 8px; font-size: 12px; }
+  .admin-btn { padding: 6px 9px; font-size: 11px; }
+  .logout { padding: 5px 9px; font-size: 11px; }
+  .avatar { width: 28px; height: 28px; font-size: 13px; }
   .char-grid { grid-template-columns: 1fr; }
   .tool-grid { grid-template-columns: 1fr; }
+  .hero { padding: 88px 16px 48px; }
+  .hero h1 { font-size: 26px; }
+  .sub { font-size: 13px; margin: 12px 0 26px; }
+  .search { gap: 6px; padding: 6px; border-radius: 16px; }
+  .search .icon { padding-left: 10px; font-size: 15px; }
+  .search input { font-size: 14px; padding: 11px 6px; }
+  .search .btn { min-width: 74px; height: 42px; font-size: 13px; letter-spacing: 1px; }
+  .search-hint { font-size: 11px; }
+  .tags { margin-top: 16px; }
+  .quick-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 8px;
+    margin-top: 26px;
+  }
+  .q-link { justify-content: center; padding: 10px 8px; font-size: 12px; }
+  .gacha-page { padding: 72px 0 36px; }
+  .gacha-page-inner { padding: 0 14px; }
+  .zone-title { font-size: 22px; }
+  .zone-sub { font-size: 12px; }
+  .section { margin-top: 56px; }
+  .foot { padding: 48px 16px 28px; }
 }
 </style>
