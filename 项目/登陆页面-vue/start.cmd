@@ -5,6 +5,7 @@ where node >nul 2>nul || (echo [Error] Node.js not found. Please install Node.js
 echo ============================================
 echo   Vue Login - Starting dev server...
 echo   Browser will open: http://localhost:5173
+echo   LAN devices:        http://192.168.68.53:5173
 echo   Close this window to stop the server.
 echo ============================================
 call npm run dev

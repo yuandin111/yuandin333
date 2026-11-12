@@ -15,6 +15,19 @@
 
 【端口】前端 5173 / 后端 8081 / MySQL 3306
 
+【局域网访问】(2026-11-12 起，让同一局域网的设备也能打开)
+  - 本机局域网 IP：192.168.68.53（DHCP 可能变；变了就改本生成器顶部 LAN_IP 后重跑）
+  - Vite 已 host:true 监听 0.0.0.0；Spring Boot 默认监听 0.0.0.0，无需额外绑定。
+  - 前端 .env：VITE_API_BASE=http://192.168.68.53:8081/api
+    ★ 不能写 localhost，否则别的设备会把请求发到它们自己机器的 8081 上。
+  - 后端 CorsConfig 已放行 192.168.68.53:5173 及 192.168.* / 10.* / 172.* 网段的 5173。
+  - 局域网设备入口：http://192.168.68.53:5173/ ；本机仍可用 http://localhost:5173/
+  - 本机 Windows 防火墙(域/专用/公用)当前均为【关闭】，无需放行规则；若日后开启，
+    需放行 TCP 入站 5173、8081：
+    netsh advfirewall firewall add rule name="yuandin333 LAN" dir=in action=allow protocol=TCP localport=5173,8081
+  - 改 .env 后 Vite 一般会自动重启(可用 curl 看 /src/services/auth.js 确认)；
+    改 CorsConfig.java / application-dev.properties 后必须重新构建并重启后端才生效。
+
 【一键启动/暂停】在桌面(两个项目文件夹的上一级)：
   - 启动项目.bat  -> 弹出两个窗口分别起后端、前端
   - 暂停项目.bat  -> 按端口杀掉 8081 和 5173 的进程(不动 MySQL)
@@ -29,7 +42,7 @@
 2) 每次重启 node_modules、target 会被删 -> 必须 npm install + maven 重新构建。
    脚本已内置；所以启动前别指望这两个文件夹存在。
 3) 前后端路径不一致：前端 auth.js 写 /auth/login，后端实际 /api/auth/login。
-   靠前端 .env 的 VITE_API_BASE=http://localhost:8081/api 对齐。
+   靠前端 .env 的 VITE_API_BASE=http://192.168.68.53:8081/api 对齐。
    不配 .env 前端走“演示模式”(假登录，不连库)。
 
 4) 数据库 springboot_test 不一定存在！后端会启动成功但登录报
@@ -40,13 +53,16 @@
    if not exist ".env" ( ... ) 这类括号代码块解析失败 -> .env 建不出来 -> 前端静默降级为
    "演示模式"(假登录，压根不请求后端)，表现就是"启动脚本失效"。
    生成脚本.py 里已用 encoding="gbk", newline="\r\n" 保证，别再用普通写入工具改这两个 bat。
+   另：用 VS Code / IDEA 打开这些 .bat 显示乱码是【正常的】，它们是 GBK 而非 UTF-8；
+   项目根目录的 .vscode/settings.json 与 .idea/encodings.xml 已按语言指定 .bat = GBK。
+   不要为了"看着不乱码"就另存为 UTF-8，否则 cmd 里的中文提示和中文路径会解析失败。
 6) vite 只在启动时读 .env，改完 .env 必须重启 dev server 才生效。
    验证是否生效：curl http://localhost:5173/src/services/auth.js | head
-   看到 "VITE_API_BASE":"http://localhost:8081/api" 才算真的连上后端。
+   看到 "VITE_API_BASE":"http://192.168.68.53:8081/api" 才算真的连上后端。
 
 【项目原本缺失、已补齐(重置丢失就用 项目\生成项目脚本.py 重跑)】
   - springBootTest/.mvn/wrapper/maven-wrapper.properties (maven 3.9.16) —— 原来没有，mvnw 直接报错
-  - 登陆页面-vue/.env (VITE_API_BASE=http://localhost:8081/api)
+  - 登陆页面-vue/.env (VITE_API_BASE=http://192.168.68.53:8081/api)
   - springBootTest/mvn-direct.sh —— 我在 Git Bash 下跑后端专用(mvn 脚本在 Git Bash 会把
     unix 路径传给 Windows java 导致 classworlds 报错；此脚本直接调 java 启动 classworlds 绕过)
 
@@ -55,6 +71,15 @@
 
 【数据库】MySQL 8.0 root/123456；初始化脚本 springBootTest/sql/springboot_test.sql(幂等，可反复跑)；
   MySQL 需运行中(系统服务，一般开机自启)。
+  ★★ 全库权威备份(含论坛 14 篇帖子)：项目\springboot_test_全库备份_含论坛_20261112.sql
+     2026-11-12 用 mysqldump 导出，10 张表齐全、中文正常、已清除全部虚假评论/点赞；
+     实测导进临时库能完整恢复出 14 篇帖子(正文共 9135 字节)。
+  ★★ 数据库丢了 / 换机器重建时，直接导这一份，别只导 springboot_test.sql：
+     mysql -uroot -p123456 -e "CREATE DATABASE IF NOT EXISTS springboot_test DEFAULT CHARACTER SET utf8mb4"
+     mysql -uroot -p123456 --default-character-set=utf8mb4 -D springboot_test < 项目\springboot_test_全库备份_含论坛_20261112.sql
+     (mysql 全路径：C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe)
+     原因：项目\springboot_test.sql 是 Navicat 旧 dump，只有 sys_user + 3 张 jjk_* 表，
+     【不含】forum_* / friend_* 这 6 张社区表——只导它会让论坛帖子全部消失(11/12 上午事故根因)。
 
 【登录自测】
   curl -X POST http://localhost:8081/api/auth/login -H "Content-Type: application/json" -d "{\"username\":\"admin\",\"password\":\"123456\"}"
@@ -63,8 +88,10 @@
 【2026-11-02 新增功能：站内检索 / 图文上传 / 分区筛选 / 时间线完善】
   - 数据库迁移(三张内容表加 image_url 列)：springBootTest\sql\upgrade_image_url_20261102.sql
     幂等可重复执行，2026-11-02 已跑过一次。全新建库顺序：先跑 sql\springboot_test.sql(用户表)、
-    再跑 项目根\jjk_seed.sql(内容数据，已含 image_url 列)。
-    注意：jjk_seed.sql 含 DROP TABLE，会清空后台改过的内容数据——只在需要重置内容时手动跑，
+    再跑 sql\restore_content_20261112.sql(三张内容表 + 31 条数据)。
+    注意：旧备忘里写的 项目根\jjk_seed.sql 已于 2026-11-09 从仓库删除，路径已失效；
+    完整数据现在在 项目\springboot_test.sql(Navicat 完整 dump) 与上面的 restore 脚本里。
+    restore 脚本含 DROP TABLE，会清空后台改过的内容——只在需要重置时手动跑，
     启动脚本【不会】自动执行它(防止每次重启丢掉管理员编辑)。
   - 新增后端接口：
     GET /api/search?q=关键词   站内跨表检索(人物/咒具/事件，公开)
@@ -73,7 +100,7 @@
     GET /api/events?era=xxx    事件可选筛选
     POST /api/admin/upload     图片上传(multipart 字段名 file，需管理员 token，
                                返回 {"url":"/uploads/xxx.png"}，文件存 springBootTest\uploads\)
-    图片访问：http://localhost:8081/uploads/xxx.png (CorsConfig 里注册了 file:uploads/ 映射)
+    图片访问：http://192.168.68.53:8081/uploads/xxx.png (CorsConfig 里注册了 file:uploads/ 映射)
     限制：png/jpg/jpeg/gif/webp，单文件 5MB(application.properties 的 multipart 配置)
   - 前端：首页搜索已连后端 /api/search(后端不可用自动回退本地过滤)；
     人物/咒具/时间线三个分区加了筛选 chips；人物弹窗带「相关事件」、事件弹窗带「相关人物」
@@ -82,4 +109,30 @@
   - 自测过的坑：spring-boot:run 带 devtools 会 fork 出独立 java 进程，mvn 父进程显示
     BUILD SUCCESS 退出但后端其实还在跑；停后端别看 mvn 窗口，要按端口杀：
     netstat -ano | findstr :8081 → taskkill /f /t /pid <pid>。
+
+【2026-11-12 新增：社区论坛 + 好友 / 私信】
+  - 数据库 6 张表：forum_post / forum_comment / forum_like / friend_request / friendship / friend_message
+    初始化脚本：springBootTest\sql\forum_friends_init.sql
+    内含 10 个示例账号、14 篇同人二创种子帖、好友关系 / 待处理申请 / 私信。
+    ★ 2026-11-12 已按需求清空全部虚假互动数据：种子评论、种子点赞、预置
+      like_count / comment_count / view_count 一律移除（初始化脚本与库中都已归零）。
+      帖子只保留正文；发帖、点赞、评论均由真实用户操作产生并真实写入 MySQL
+      （已用普通账号端到端验证：forum_post / forum_like / forum_comment 都有落库记录）。
+    ★ 该脚本含 DROP TABLE，会清空论坛与好友数据；启动脚本【不会】自动执行它，
+      换机器或重置数据库后需手动跑一次：
+      "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -uroot -p123456 --default-character-set=utf8mb4 -D springboot_test < springBootTest\sql\forum_friends_init.sql
+  - 后端接口：/api/forum/**（板块 / 帖子 / 评论 / 点赞）与 /api/friends/**（找人 / 申请 / 列表 / 私信）。
+    读接口公开，写接口需在 Authorization 头带普通用户 token；作者本人或管理员可编辑删除。
+  - 前端：App.vue 新增 view = forum / friends；HomePage 顶部导航与首屏快捷入口可进入；
+    API 集中在 src/services/community.js（自动带 localStorage 里的 token）。
+  - 示例账号密码统一 123456；admin 为管理员(permission=0)，其余为普通用户。
+  - 登录会话：AuthTokens 把 token 持久化到后端目录的 .auth-tokens.data（已 gitignore），
+    后端重启 / devtools 热重载后不再让用户莫名掉线；删掉该文件可强制所有人重新登录。
+    前端 401 由 community.js 广播 auth-expired，App.vue 弹明确提示后才回登录页；
+    首页「好友申请角标」属可选请求，401 静默忽略，不会把整站踢回登录页。
+  - ★ 用户明确决定：14 篇同人二创帖子正文必须保留，不要清空 / 删除。
+    「清虚假数据」只指评论、点赞、浏览量，不含帖子正文；初始化脚本里 14 行帖子 INSERT 也保留。
+  - 清理前完整备份(含旧的假评论/假赞，仅供考古)：springBootTest\sql\forum_backup_before_cleanup_20261112.sql
+  - 当前干净状态的权威备份(推荐用这份恢复)：项目\springboot_test_全库备份_含论坛_20261112.sql
+    2026-11-12 14:55 导出；14 篇帖子正文完整、0 评论、0 点赞、三个计数全 0。
 ================================================================================

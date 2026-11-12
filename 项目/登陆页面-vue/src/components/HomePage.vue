@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { fetchContent, search, resolveUrl } from '../services/auth.js'
+import { getOverview } from '../services/community.js'
 import GachaCard from './GachaCard.vue'
 
 const props = defineProps({
@@ -9,7 +10,20 @@ const props = defineProps({
   // 是否管理员权限（permission = 0 时为 true）；false 则隐藏后台管理入口
   isAdmin: { type: Boolean, default: false }
 })
-const emit = defineEmits(['logout', 'admin'])
+const emit = defineEmits(['logout', 'admin', 'forum', 'friends'])
+
+// 好友待处理申请数：用于顶部导航角标（后端不可用时保持 0）
+const pendingCount = ref(0)
+onMounted(async () => {
+  // 未登录不发请求；角标是可选信息，401 静默忽略，不能因为角标把用户踢回登录页
+  if (!localStorage.getItem('token')) return
+  try {
+    const r = await getOverview(true)
+    pendingCount.value = r?.pending || 0
+  } catch (e) {
+    /* 演示模式或接口异常时忽略 */
+  }
+})
 
 const initial = () => (props.user || 'U').trim().charAt(0).toUpperCase()
 
@@ -28,6 +42,9 @@ const goHome = () => {
   scrollToTop()
 }
 const scrollTo = (id) => {
+  // 论坛 / 好友是独立页面，交给 App.vue 切换视图
+  if (id === 'forum') { emit('forum'); return }
+  if (id === 'friends') { emit('friends'); return }
   if (id === 'gacha') {
     page.value = 'gacha'
     scrollToTop()
@@ -47,7 +64,9 @@ const menus = computed(() => [
   { label: '祈愿', id: 'gacha', active: page.value === 'gacha' },
   { label: '人物志', id: 'characters', active: false },
   { label: '咒具图鉴', id: 'tools', active: false },
-  { label: '时间线', id: 'timeline', active: false }
+  { label: '时间线', id: 'timeline', active: false },
+  { label: '社区论坛', id: 'forum', active: false },
+  { label: pendingCount.value ? `好友 ·${pendingCount.value}` : '好友', id: 'friends', active: false }
 ])
 
 // 首屏快捷入口：只做跳转，不改变任何业务逻辑
@@ -55,7 +74,9 @@ const quickLinks = [
   { id: 'gacha', label: '咒力祈愿', icon: '✦' },
   { id: 'characters', label: '人物志', icon: '👤' },
   { id: 'tools', label: '咒具图鉴', icon: '🗡️' },
-  { id: 'timeline', label: '时间线', icon: '🕰️' }
+  { id: 'timeline', label: '时间线', icon: '🕰️' },
+  { id: 'forum', label: '社区论坛', icon: '✍️' },
+  { id: 'friends', label: '好友私信', icon: '🤝' }
 ]
 
 // ================= 搜索（后端 /api/search 跨表检索，失败回退本地过滤） =================

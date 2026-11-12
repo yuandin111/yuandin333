@@ -1,10 +1,12 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onBeforeUnmount, ref } from 'vue'
 import LoginCard from './components/LoginCard.vue'
 import RegisterCard from './components/RegisterCard.vue'
 import HomePage from './components/HomePage.vue'
 import AdminLogin from './components/AdminLogin.vue'
 import AdminPage from './components/AdminPage.vue'
+import ForumPage from './components/ForumPage.vue'
+import FriendsPage from './components/FriendsPage.vue'
 
 // 视图状态：login = 登录/注册页，home = 首页，admin-login = 后台登录页，admin = 后台管理系统
 const view = ref('login')
@@ -20,7 +22,20 @@ const stars = ref([])
 // 飘落御札（符咒）装饰
 const talismans = ref([])
 
+// 会话过期提示：由 community.js 在 401 时广播，明确告诉用户原因，不再静默跳登录页
+const sessionTip = ref('')
+const onAuthExpired = (e) => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('permission')
+  sessionTip.value = e?.detail || '登录已过期，请重新登录'
+  user.value = ''
+  permission.value = 1
+  view.value = 'login'
+  mode.value = 'login'
+}
+
 onMounted(() => {
+  window.addEventListener('auth-expired', onAuthExpired)
   const arr = []
   for (let i = 0; i < 60; i++) {
     arr.push({
@@ -63,8 +78,11 @@ onMounted(() => {
   }
 })
 
+onBeforeUnmount(() => window.removeEventListener('auth-expired', onAuthExpired))
+
 // 登录成功：保存 token 与权限，并跳转首页
 const onLoginSuccess = ({ name, token, permission: perm }) => {
+  sessionTip.value = ''
   localStorage.setItem('token', token || 'demo-token')
   localStorage.setItem('user', name)
   // 仅 0 视为管理员权限，其余（含缺省）一律按默认权限处理
@@ -115,6 +133,12 @@ const onAdminLogout = () => {
 </script>
 
 <template>
+  <!-- 会话过期提示：登录已失效时明确说明原因，避免莫名其妙跳回登录页 -->
+  <div v-if="sessionTip" class="session-tip" role="alert">
+    <span>⚠️ {{ sessionTip }}</span>
+    <button type="button" aria-label="关闭提示" @click="sessionTip = ''">×</button>
+  </div>
+
   <!-- 动态背景：流动光斑 -->
   <div class="bg">
     <div class="blob b1"></div>
@@ -188,7 +212,24 @@ const onAdminLogout = () => {
 
   <!-- 首页 -->
   <div v-if="view === 'home'" class="home-view">
-    <HomePage :user="user" :is-admin="isAdmin" @logout="onLogout" @admin="goAdmin" />
+    <HomePage
+      :user="user"
+      :is-admin="isAdmin"
+      @logout="onLogout"
+      @admin="goAdmin"
+      @forum="view = 'forum'"
+      @friends="view = 'friends'"
+    />
+  </div>
+
+  <!-- 社区论坛 -->
+  <div v-else-if="view === 'forum'" class="home-view">
+    <ForumPage :user="user" @back="view = 'home'" @friends="view = 'friends'" />
+  </div>
+
+  <!-- 好友 / 私信 -->
+  <div v-else-if="view === 'friends'" class="home-view">
+    <FriendsPage :user="user" @back="view = 'home'" @forum="view = 'forum'" />
   </div>
 
   <!-- 后台管理系统 -->
@@ -209,6 +250,42 @@ const onAdminLogout = () => {
 </template>
 
 <style scoped>
+.session-tip {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: min(92vw, 520px);
+  padding: 12px 14px 12px 18px;
+  border-radius: 12px;
+  background: #fff6f6;
+  border: 1px solid #f3a6a6;
+  color: #a52323;
+  box-shadow: 0 10px 30px rgba(80, 0, 0, 0.18);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.session-tip button {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+.session-tip button:hover {
+  background: rgba(165, 35, 35, 0.1);
+}
+
 .bg {
   position: fixed;
   inset: 0;

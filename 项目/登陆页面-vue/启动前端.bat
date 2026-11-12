@@ -12,10 +12,11 @@ node -v
 REM ===== 1. 自愈：确保 .env 存在且指向后端 /api =====
 if not exist ".env" (
     echo [自愈] 缺少 .env，正在创建...
-    > .env echo VITE_API_BASE=http://localhost:8081/api
+    > .env echo VITE_API_BASE=http://192.168.68.53:8081/api
 )
-findstr /c:"VITE_API_BASE" ".env" >nul 2>nul || (>> .env echo VITE_API_BASE=http://localhost:8081/api)
+findstr /c:"VITE_API_BASE" ".env" >nul 2>nul || (>> .env echo VITE_API_BASE=http://192.168.68.53:8081/api)
 echo [配置] VITE_API_BASE 已就绪(缺失会让前端走演示模式，不连后端)。
+echo [访问] 本机 http://localhost:5173/  局域网 http://192.168.68.53:5173/
 
 REM ===== 2. 安装依赖(node_modules 每次重启会被删，需重装) =====
 echo [1/3] 安装前端依赖...
@@ -27,7 +28,7 @@ if errorlevel 1 (
 )
 
 REM ===== 3. 前置检查：后端 8081 是否已启动 =====
-echo [2/3] 检查后端 http://localhost:8081 ...
+echo [2/3] 检查后端 http://192.168.68.53:8081 ...
 netstat -ano | findstr ":8081" | findstr "LISTENING" >nul 2>nul
 if errorlevel 1 (
     echo   [警告] 后端 8081 未在监听，登录/注册将失败。

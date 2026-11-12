@@ -21,7 +21,15 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("http://localhost:5173", "http://127.0.0.1:5173") // 生产环境改成前端真实域名
+                // 本机 + 局域网：Vite 以 0.0.0.0 对外提供 5173，局域网设备会用本机 IP 打开前端；
+                // 不放行对应 origin 的话，登录/内容等接口会被浏览器 CORS 拦截。
+                .allowedOriginPatterns(
+                        "http://localhost:5173",
+                        "http://127.0.0.1:5173",
+                        "http://192.168.68.53:5173",
+                        "http://192.168.*:5173",
+                        "http://10.*:5173",
+                        "http://172.*:5173")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)
