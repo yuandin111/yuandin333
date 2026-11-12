@@ -1,0 +1,10 @@
+package com.fenglin.springboottest.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.fenglin.springboottest.entity.ForumComment;
+import org.apache.ibatis.annotations.Mapper;
+
+/** ForumComment Mapper */
+@Mapper
+public interface ForumCommentMapper extends BaseMapper<ForumComment> {
+}
