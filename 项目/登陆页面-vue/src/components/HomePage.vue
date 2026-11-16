@@ -3,6 +3,7 @@ import { ref, computed, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { fetchContent, search, resolveUrl } from '../services/auth.js'
 import { getOverview } from '../services/community.js'
 import GachaCard from './GachaCard.vue'
+import AutoChessCard from './AutoChessCard.vue'
 
 const props = defineProps({
   // 登录用户名，由 App.vue 传入
@@ -27,8 +28,8 @@ onMounted(async () => {
 
 const initial = () => (props.user || 'U').trim().charAt(0).toUpperCase()
 
-// ================= 视图切换：资料首页 / 祈愿页（祈愿是独立页面，不在首页出现） =================
-const page = ref('home') // 'home' | 'gacha'
+// ================= 视图切换：资料首页 / 祈愿页 / 自走棋页（均为独立页面，不在首页混排） =================
+const page = ref('home') // 'home' | 'gacha' | 'chess'
 
 const scrollContainer = () => document.querySelector('.home-view')
 const scrollToTop = () => scrollContainer()?.scrollTo({ top: 0, behavior: 'auto' })
@@ -45,8 +46,8 @@ const scrollTo = (id) => {
   // 论坛 / 好友是独立页面，交给 App.vue 切换视图
   if (id === 'forum') { emit('forum'); return }
   if (id === 'friends') { emit('friends'); return }
-  if (id === 'gacha') {
-    page.value = 'gacha'
+  if (id === 'gacha' || id === 'chess') {
+    page.value = id
     scrollToTop()
     return
   }
@@ -62,6 +63,7 @@ const scrollTo = (id) => {
 const menus = computed(() => [
   { label: '首页', id: 'top', active: page.value === 'home' },
   { label: '祈愿', id: 'gacha', active: page.value === 'gacha' },
+  { label: '自走棋', id: 'chess', active: page.value === 'chess' },
   { label: '人物志', id: 'characters', active: false },
   { label: '咒具图鉴', id: 'tools', active: false },
   { label: '时间线', id: 'timeline', active: false },
@@ -72,6 +74,7 @@ const menus = computed(() => [
 // 首屏快捷入口：只做跳转，不改变任何业务逻辑
 const quickLinks = [
   { id: 'gacha', label: '咒力祈愿', icon: '✦' },
+  { id: 'chess', label: '讨伐自走棋', icon: '♟️' },
   { id: 'characters', label: '人物志', icon: '👤' },
   { id: 'tools', label: '咒具图鉴', icon: '🗡️' },
   { id: 'timeline', label: '时间线', icon: '🕰️' },
@@ -784,13 +787,32 @@ onBeforeUnmount(() => {
       <header class="zone-head">
         <span class="zone-badge"><i class="dot"></i>EXCLUSIVE · 专属专区</span>
         <h2 class="zone-title">咒力<span class="grad">祈愿</span></h2>
-        <p class="zone-sub">以咒力为引，召唤属于你的术师与咒灵 · 结果仅保存在本页，不影响资料库数据</p>
+        <p class="zone-sub">以咒力为引，召唤属于你的术师与咒灵 · 抽到的卡可到讨伐自走棋上阵</p>
       </header>
 
-      <GachaCard />
+      <GachaCard @go-chess="scrollTo('chess')" />
 
       <div class="gacha-page-foot">
         <button class="back-home" @click="goHome">← 返回首页</button>
+        <button class="back-home" @click="scrollTo('chess')">♟ 去讨伐自走棋</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 自走棋视图：独立页面，祈愿抽到的卡可在此上阵讨伐 ===== -->
+  <section v-if="page === 'chess'" class="gacha-page" id="chess">
+    <div class="gacha-page-inner chess-page-inner">
+      <header class="zone-head">
+        <span class="zone-badge"><i class="dot"></i>EXCLUSIVE · 专属专区</span>
+        <h2 class="zone-title">讨伐<span class="grad">自走棋</span></h2>
+        <p class="zone-sub">用祈愿抽到的术师排兵布阵，自动讨伐特级咒灵 · 凑羁绊、通关领咒力</p>
+      </header>
+
+      <AutoChessCard @go-gacha="scrollTo('gacha')" />
+
+      <div class="gacha-page-foot">
+        <button class="back-home" @click="goHome">← 返回首页</button>
+        <button class="back-home" @click="scrollTo('gacha')">✦ 去祈愿抽卡</button>
       </div>
     </div>
   </section>
@@ -1332,6 +1354,8 @@ onBeforeUnmount(() => {
   outline: 2px solid var(--c3);
   outline-offset: 2px;
 }
+.gacha-page-foot .back-home + .back-home { margin-left: 12px; }
+.chess-page-inner .zone-head { text-align: center; }
 .zone-head {
   text-align: center;
   margin-bottom: 28px;

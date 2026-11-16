@@ -2,7 +2,7 @@
 import { nextTick, onMounted, ref } from 'vue'
 import { fetchCaptcha, register } from '../services/auth'
 
-const emit = defineEmits(['switch'])
+const emit = defineEmits(['switch', 'success'])
 
 const user = ref('')
 const code = ref('')
@@ -104,11 +104,15 @@ const submit = async () => {
       code: code.value.trim(),
       password: pass.value
     })
-    flash('注册成功，正在前往登录…', true)
-    console.log('注册返回：', res)
-    setTimeout(() => emit('switch', 'login'), 1600)
+    // 兼容后端返回结构 { token, user }，新用户注册后直接登录进首页，无需重新输入
+    const name = res?.user?.username || user.value.trim()
+    const token = res?.token || ''
+    const permission = res?.user?.permission ?? 1
+    flash('注册成功，正在进入…', true)
+    setTimeout(() => emit('success', { name, token, permission }), 800)
   } catch (e) {
-    const text = e.response?.data?.message || '注册失败，请稍后重试'
+    // 业务错误（用户名已存在 / 验证码错误等）由 auth.js 抛出的 Error.message 携带
+    const text = e.message || e.response?.data?.message || '注册失败，请稍后重试'
     flash(text, false)
     loadCaptcha() // 验证码一次性使用，失败后自动换一张
   } finally {

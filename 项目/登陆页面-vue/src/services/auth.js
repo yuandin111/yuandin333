@@ -91,14 +91,21 @@ export async function fetchCaptcha() {
  */
 export async function register({ username, captchaId, code, password }) {
   if (!BASE) {
-    // —— 演示模式：模拟网络请求 ——
-    // 注册用户一律为默认权限（1），与后端规则保持一致
-    await new Promise((r) => setTimeout(r, 1600))
-    return { token: 'demo-token', user: { name: username, permission: 1 } }
+    // 未配置后端地址时无法真正写入数据库：明确失败，避免"假注册成功"误导用户
+    // 需求是注册用户必须入库，因此这里不再返回 demo-token 假装成功
+    throw new Error('当前未配置后端地址，无法完成注册入库。请在前端 .env 中配置 VITE_API_BASE 指向后端后重试。')
   }
 
   const { data } = await client.post('/auth/register', { username, captchaId, code, password })
-  return data
+  // 后端业务错误（验证码错误 401 / 用户名已存在 409 等）以 HTTP 200 + code != 200 返回，
+  // axios 不会自动抛错，必须手动拦截，否则会被上层误判为"注册成功"。
+  if (data && data.code !== 200) {
+    const err = new Error(data.message || '注册失败')
+    err.code = data.code
+    throw err
+  }
+  // 只把 data.data（含 token / user）交给调用方，结构更清晰
+  return data?.data || data
 }
 
 // ==================== 首页内容公开查询 ====================

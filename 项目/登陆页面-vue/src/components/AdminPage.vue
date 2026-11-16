@@ -87,6 +87,44 @@ const sections = [
       { key: 'sort', label: '排序（越小越靠前）', type: 'number' }
     ],
     defaults: { era: '', title: '', imageUrl: '', desc: '', sort: 0 }
+  },
+  {
+    key: 'posts',
+    label: '论坛帖子管理',
+    icon: '📋',
+    columns: [
+      { key: 'title', label: '标题', width: '240px', type: 'ellipsis' },
+      { key: 'categoryName', label: '板块', width: '110px', type: 'category' },
+      { key: 'authorName', label: '作者', width: '120px' },
+      { key: 'isTop', label: '状态', width: '140px', type: 'postFlags' },
+      { key: 'likeCount', label: '赞/评/看', width: '110px', type: 'stats' },
+      { key: 'createTime', label: '发布时间', width: '150px' }
+    ],
+    fields: [
+      { key: 'title', label: '标题', required: true },
+      {
+        key: 'category', label: '板块', type: 'select', options: [
+          { value: 'fanwork', label: '同人二创' },
+          { value: 'fanart', label: '同人图绘' },
+          { value: 'discuss', label: '剧情讨论' },
+          { value: 'lore', label: '术式考据' },
+          { value: 'chat', label: '闲聊水区' }
+        ]
+      },
+      { key: 'authorName', label: '作者', placeholder: '例如：虎杖悠仁' },
+      { key: 'tags', label: '标签（逗号分隔）', placeholder: '例如：日常,治愈,虎杖' },
+      { key: 'content', label: '正文', type: 'textarea' },
+      { key: 'isTop', label: '置顶', type: 'select', options: [
+        { value: 0, label: '否' }, { value: 1, label: '是' }
+      ] },
+      { key: 'isEssence', label: '精华', type: 'select', options: [
+        { value: 0, label: '否' }, { value: 1, label: '是' }
+      ] },
+      { key: 'status', label: '状态', type: 'select', options: [
+        { value: 1, label: '正常' }, { value: 0, label: '已删除（隐藏）' }
+      ] }
+    ],
+    defaults: { title: '', category: 'fanwork', authorName: 'admin', tags: '', content: '', isTop: 0, isEssence: 0, status: 1 }
   }
 ]
 
@@ -206,6 +244,12 @@ const uploading = ref(false)
 // 相对地址（/uploads/xxx.png）→ 后端完整地址
 const img = (url) => resolveUrl(url)
 
+// 时间格式化：2026-11-16T08:00:00 → 2026-11-16 08:00
+const fmtTime = (v) => {
+  if (!v) return '—'
+  return String(v).replace('T', ' ').slice(0, 16)
+}
+
 const onFileChange = async (e) => {
   const file = e.target.files && e.target.files[0]
   if (!file) return
@@ -307,9 +351,22 @@ onMounted(load)
                 <template v-else-if="c.type === 'grade'">
                   <span class="pill" :class="'pill-' + (row.gradeClass || 'unknown')">{{ row.grade }}</span>
                 </template>
+                <template v-else-if="c.type === 'category'">
+                  <span class="pill pill-cyan">{{ row[c.key] }}</span>
+                </template>
+                <template v-else-if="c.type === 'postFlags'">
+                  <span class="pill pill-red" v-if="row.isTop === 1">置顶</span>
+                  <span class="pill pill-gold" v-if="row.isEssence === 1">精华</span>
+                  <span class="pill pill-unknown" v-if="row.status === 0">隐藏</span>
+                  <span v-if="row.isTop !== 1 && row.isEssence !== 1 && row.status !== 0" class="muted-txt">普通</span>
+                </template>
+                <template v-else-if="c.type === 'stats'">
+                  <span class="stats-txt">♥ {{ row.likeCount || 0 }} · 💬 {{ row.commentCount || 0 }} · 👁 {{ row.viewCount || 0 }}</span>
+                </template>
                 <template v-else-if="c.type === 'ellipsis'">
                   <span class="ellipsis">{{ row[c.key] }}</span>
                 </template>
+                <template v-else-if="c.key === 'createTime'">{{ fmtTime(row.createTime) }}</template>
                 <template v-else>{{ row[c.key] }}</template>
               </td>
               <td>
@@ -664,6 +721,10 @@ onMounted(load)
 .pill-top { color: #ffd166; border-color: rgba(255, 209, 102, 0.55); background: rgba(255, 209, 102, 0.12); }
 .pill-relic { color: #c58bff; border-color: rgba(197, 139, 255, 0.55); background: rgba(197, 139, 255, 0.12); }
 .pill-maybe { color: #ffa94d; border-color: rgba(255, 169, 77, 0.55); background: rgba(255, 169, 77, 0.12); }
+.pill-gold { color: #ffd166; border-color: rgba(255, 209, 102, 0.55); background: rgba(255, 209, 102, 0.12); }
+.pill-unknown { color: #9aa4b2; border-color: rgba(154, 164, 178, 0.5); background: rgba(154, 164, 178, 0.12); }
+.muted-txt { color: var(--muted); font-size: 12px; }
+.stats-txt { color: var(--muted); font-size: 11px; white-space: nowrap; }
 
 .op {
   padding: 5px 12px;

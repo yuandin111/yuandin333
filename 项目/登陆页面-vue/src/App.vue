@@ -245,7 +245,7 @@ const onAdminLogout = () => {
   <!-- 登录 / 注册 -->
   <div v-else class="login-view">
     <LoginCard v-if="mode === 'login'" @switch="mode = $event" @success="onLoginSuccess" />
-    <RegisterCard v-else @switch="mode = $event" />
+    <RegisterCard v-else @switch="mode = $event" @success="onLoginSuccess" />
   </div>
 </template>
 

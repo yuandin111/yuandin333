@@ -1,7 +1,13 @@
 <script setup>
 import { computed, onBeforeUnmount, ref } from 'vue'
+import {
+  getEnergy, spendEnergy, addCharacter, ENERGY_COST
+} from '../services/gameStore.js'
 
-// 咒力祈愿：纯前端演示卡池，不依赖后端接口、不写入数据库
+const emit = defineEmits(['go-chess'])
+
+// 咒力祈愿：卡池与保底逻辑保持原样；新增「消耗咒力 + 抽到的卡入仓库」，
+// 让抽卡结果能在「讨伐自走棋」中上阵使用。存档走 gameStore（localStorage）。
 const pool = [
   { name: '五条悟', icon: '😎', rarity: 'SSR', title: '现代最强 · 六眼', desc: '无下限术式 / 领域「无量空处」' },
   { name: '两面宿傩', icon: '👑', rarity: 'SSR', title: '诅咒之王', desc: '解 · 捌 / 领域「伏魔御厨子」' },
@@ -28,6 +34,8 @@ const results = ref([])
 const history = ref([])
 const drawing = ref(false)
 const showHistory = ref(false)
+const energy = ref(getEnergy())
+const notice = ref('')
 let timer = null
 
 const pityLeft = computed(() => Math.max(0, 10 - pity.value))
@@ -56,13 +64,25 @@ const pickOne = (guaranteeSR = false) => {
 
 const draw = (n) => {
   if (drawing.value) return
+  const cost = n === 10 ? ENERGY_COST.ten : ENERGY_COST.single
+  if (!spendEnergy(cost)) {
+    energy.value = getEnergy()
+    notice.value = `咒力不足：本次需要 ${cost}，当前只有 ${energy.value}。去「讨伐自走棋」通关可领取咒力。`
+    return
+  }
+  energy.value = getEnergy()
+  notice.value = ''
   drawing.value = true
   showHistory.value = false
   results.value = []
   clearTimeout(timer)
   timer = setTimeout(() => {
     const out = []
-    for (let i = 0; i < n; i++) out.push(pickOne(n === 10 && i === 9))
+    for (let i = 0; i < n; i++) {
+      const card = pickOne(n === 10 && i === 9)
+      out.push(card)
+      addCharacter(card) // 抽到的卡进入角色仓库，可在自走棋上阵
+    }
     results.value = out
     history.value = [...out].reverse().concat(history.value).slice(0, 24)
     drawing.value = false
@@ -75,10 +95,13 @@ onBeforeUnmount(() => clearTimeout(timer))
 <template>
   <div class="gacha-body">
     <div class="meta">
+      <span class="energy-pill">🔮 咒力 <b>{{ energy.toLocaleString() }}</b></span>
       <span>累计 <b>{{ total }}</b> 抽</span>
       <span>SSR <b>{{ ssrCount }}</b></span>
       <span>保底还剩 <b>{{ pityLeft }}</b> 抽</span>
     </div>
+
+    <p v-if="notice" class="notice">{{ notice }}</p>
 
     <div class="stage" aria-live="polite">
       <div v-if="drawing" class="summon">
@@ -115,13 +138,16 @@ onBeforeUnmount(() => clearTimeout(timer))
     </div>
 
     <div class="actions">
-      <button class="g-btn" :disabled="drawing" @click="draw(1)">✦ 单次祈愿</button>
-      <button class="g-btn primary" :disabled="drawing" @click="draw(10)">
-        ✧ 十连祈愿 <small>必出 SR 以上</small>
+      <button class="g-btn" :disabled="drawing || energy < ENERGY_COST.single" @click="draw(1)">
+        ✦ 单次祈愿 <small>🔮{{ ENERGY_COST.single }}</small>
+      </button>
+      <button class="g-btn primary" :disabled="drawing || energy < ENERGY_COST.ten" @click="draw(10)">
+        ✧ 十连祈愿 <small>🔮{{ ENERGY_COST.ten }} · 必出 SR</small>
       </button>
       <button class="g-btn ghost" @click="showHistory = !showHistory">
         祈愿记录 <small v-if="history.length">({{ history.length }})</small>
       </button>
+      <button class="g-btn chess" @click="emit('go-chess')">♟ 去讨伐自走棋 →</button>
     </div>
 
     <div v-if="showHistory" class="history">
@@ -136,7 +162,7 @@ onBeforeUnmount(() => clearTimeout(timer))
         <p v-else class="h-empty">还没有祈愿记录</p>
       </div>
 
-    <p class="note">※ 本模块为前端演示，结果仅保存在当前页面，刷新即重置，不会写入数据库。</p>
+    <p class="note">※ 试玩版：每次祈愿消耗咒力，抽到的术师自动存入「角色仓库」，可到讨伐自走棋上阵。存档保存在本浏览器，刷新不丢失。</p>
   </div>
 </template>
 
@@ -167,6 +193,23 @@ onBeforeUnmount(() => clearTimeout(timer))
   color: var(--c3);
   font-size: 15px;
   margin: 0 2px;
+}
+.meta .energy-pill {
+  border-color: rgba(255, 196, 90, 0.5);
+  background: rgba(255, 196, 90, 0.08);
+  color: #ffd77a;
+}
+.meta .energy-pill b { color: #ffd77a; }
+
+.notice {
+  margin: -6px 0 14px;
+  text-align: center;
+  font-size: 12px;
+  color: #ffd77a;
+  background: rgba(255, 196, 90, 0.08);
+  border: 1px solid rgba(255, 196, 90, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
 }
 
 .stage {
@@ -357,6 +400,15 @@ onBeforeUnmount(() => clearTimeout(timer))
 .g-btn.ghost {
   background: transparent;
   color: var(--muted);
+}
+.g-btn.chess {
+  border-color: rgba(125, 211, 252, 0.5);
+  color: #7dd3fc;
+  background: rgba(56, 217, 255, 0.08);
+}
+.g-btn.chess:hover:not(:disabled) {
+  border-color: #7dd3fc;
+  box-shadow: 0 0 16px rgba(56, 217, 255, 0.28);
 }
 
 .g-btn:disabled {
