@@ -69,6 +69,13 @@
 【后端手动启动(Bash 环境，供 AI 自己)】
   cd springBootTest && unset SERVER__PORT && ./mvn-direct.sh spring-boot:run
 
+【★★ 最新权威备份 2026-11-19】项目\springboot_test_全库备份_含好友配图置顶_20261119.sql
+  —— 10 张表齐全(含 friend_* 三表)、25帖100评144赞、56张配图路径、2篇置顶；换机器/重建优先导这份。
+  —— 配图实体在 springBootTest\uploads\*.svg(56张)，一并拷走；数据库只存 /uploads/xxx.svg 路径。
+  —— 独立修复脚本：sql\修复好友表_20261119.sql(补friend三表)、sql\设置置顶帖_20261119.sql、
+     sql\apply_cover_images_20261119.sql(配图路径)、生成互动数据.py / 生成配图.py / 生成数据报表.py。
+  —— 注意：旧备份 springboot_test_全库备份_含论坛_20261112.sql 只有 7 张表、无好友/配图/置顶，勿再用它恢复。
+
 【数据库】MySQL 8.0 root/123456；初始化脚本 springBootTest/sql/springboot_test.sql(幂等，可反复跑)；
   MySQL 需运行中(系统服务，一般开机自启)。
   ★★ 全库权威备份(含论坛 14 篇帖子)：项目\springboot_test_全库备份_含论坛_20261112.sql
