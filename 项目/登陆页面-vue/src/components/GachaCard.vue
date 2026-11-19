@@ -4,10 +4,8 @@ import {
   getEnergy, spendEnergy, addCharacter, ENERGY_COST
 } from '../services/gameStore.js'
 
-const emit = defineEmits(['go-chess'])
-
-// 咒力祈愿：卡池与保底逻辑保持原样；新增「消耗咒力 + 抽到的卡入仓库」，
-// 让抽卡结果能在「讨伐自走棋」中上阵使用。存档走 gameStore（localStorage）。
+// 咒力祈愿：卡池与保底逻辑保持原样；消耗咒力 + 抽到的卡入仓库，
+// 存档走 gameStore（localStorage）。咒力可通过「咒术问答」答对题目获取。
 const pool = [
   { name: '五条悟', icon: '😎', rarity: 'SSR', title: '现代最强 · 六眼', desc: '无下限术式 / 领域「无量空处」' },
   { name: '两面宿傩', icon: '👑', rarity: 'SSR', title: '诅咒之王', desc: '解 · 捌 / 领域「伏魔御厨子」' },
@@ -67,7 +65,7 @@ const draw = (n) => {
   const cost = n === 10 ? ENERGY_COST.ten : ENERGY_COST.single
   if (!spendEnergy(cost)) {
     energy.value = getEnergy()
-    notice.value = `咒力不足：本次需要 ${cost}，当前只有 ${energy.value}。去「讨伐自走棋」通关可领取咒力。`
+    notice.value = `咒力不足：本次需要 ${cost}，当前只有 ${energy.value}。去「咒术问答」答对题目可领取咒力。`
     return
   }
   energy.value = getEnergy()
@@ -81,7 +79,7 @@ const draw = (n) => {
     for (let i = 0; i < n; i++) {
       const card = pickOne(n === 10 && i === 9)
       out.push(card)
-      addCharacter(card) // 抽到的卡进入角色仓库，可在自走棋上阵
+      addCharacter(card) // 抽到的卡进入角色仓库
     }
     results.value = out
     history.value = [...out].reverse().concat(history.value).slice(0, 24)
@@ -147,7 +145,6 @@ onBeforeUnmount(() => clearTimeout(timer))
       <button class="g-btn ghost" @click="showHistory = !showHistory">
         祈愿记录 <small v-if="history.length">({{ history.length }})</small>
       </button>
-      <button class="g-btn chess" @click="emit('go-chess')">♟ 去讨伐自走棋 →</button>
     </div>
 
     <div v-if="showHistory" class="history">
@@ -162,7 +159,7 @@ onBeforeUnmount(() => clearTimeout(timer))
         <p v-else class="h-empty">还没有祈愿记录</p>
       </div>
 
-    <p class="note">※ 试玩版：每次祈愿消耗咒力，抽到的术师自动存入「角色仓库」，可到讨伐自走棋上阵。存档保存在本浏览器，刷新不丢失。</p>
+    <p class="note">※ 试玩版：每次祈愿消耗咒力，抽到的术师自动存入「角色仓库」。咒力不足时去「咒术问答」答对题目即可领取。存档保存在本浏览器，刷新不丢失。</p>
   </div>
 </template>
 
@@ -400,15 +397,6 @@ onBeforeUnmount(() => clearTimeout(timer))
 .g-btn.ghost {
   background: transparent;
   color: var(--muted);
-}
-.g-btn.chess {
-  border-color: rgba(125, 211, 252, 0.5);
-  color: #7dd3fc;
-  background: rgba(56, 217, 255, 0.08);
-}
-.g-btn.chess:hover:not(:disabled) {
-  border-color: #7dd3fc;
-  box-shadow: 0 0 16px rgba(56, 217, 255, 0.28);
 }
 
 .g-btn:disabled {

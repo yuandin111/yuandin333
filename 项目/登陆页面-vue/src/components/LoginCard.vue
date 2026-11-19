@@ -1,6 +1,8 @@
 <script setup>
-import { nextTick, ref } from 'vue'
+import { nextTick, ref, watch } from 'vue'
 import { login } from '../services/auth'
+import FactionSelect from './FactionSelect.vue'
+import { applyFactionTheme, getFaction, loadFaction, saveFaction } from '../services/faction'
 
 const emit = defineEmits(['switch', 'success'])
 
@@ -12,6 +14,17 @@ const msg = ref('')
 const msgOk = ref(false)
 const shaking = ref(false)
 const card = ref(null)
+
+// 阵营选择：初始读取已保存偏好，选择后联动主题并持久化
+const faction = ref(loadFaction())
+const currentFaction = ref(getFaction(faction.value))
+applyFactionTheme(faction.value)
+
+watch(faction, (id) => {
+  currentFaction.value = applyFactionTheme(id)
+  saveFaction(id)
+  if (msg.value && !msgOk.value) { msg.value = '' }
+})
 
 const togglePass = () => {
   showPass.value = !showPass.value
@@ -44,6 +57,10 @@ const flash = (text, ok) => {
 
 const submit = async () => {
   if (loading.value) return
+  if (!faction.value) {
+    flash('请先选择你的阵营', false)
+    return
+  }
   if (!user.value.trim() || !pass.value) {
     flash('请输入用户名和密码', false)
     return
@@ -51,14 +68,15 @@ const submit = async () => {
   loading.value = true
   msg.value = ''
   try {
-    const res = await login({ username: user.value.trim(), password: pass.value })
-    flash('登录成功，正在跳转…', true)
+    // 阵营作为前端偏好随登录请求带回，供首页等处展示
+    const res = await login({ username: user.value.trim(), password: pass.value, faction: faction.value })
+    flash(`欢迎回到${currentFaction.value.name}，正在跳转…`, true)
     // 兼容两种返回结构：真实后端 { code, data:{ user, token } } / 演示模式 { token, user }
     const name = res?.data?.user?.username || res?.user?.name || user.value.trim()
     const token = res?.data?.token || res?.token || 'demo-token'
     // 权限：0 = 管理员权限（可见后台按钮、可登录后台），1 = 默认权限；缺省按默认权限处理
     const permission = res?.data?.user?.permission ?? res?.user?.permission ?? 1
-    emit('success', { name, token, permission })
+    emit('success', { name, token, permission, faction: faction.value })
   } catch (e) {
     const text = e.response?.data?.message || '登录失败，请检查网络或账号'
     flash(text, false)
@@ -77,15 +95,22 @@ const submit = async () => {
       <span class="corner bl"></span>
       <span class="corner br"></span>
 
-      <!-- 咒印徽章 -->
-      <div class="emblem">
+      <!-- 阵营徽章 -->
+      <div class="emblem" :class="'emblem--' + faction">
         <span class="emblem-ring"></span>
         <span class="emblem-ring r2"></span>
-        <span class="emblem-core">咒</span>
+        <span class="emblem-core">{{ currentFaction.sigil }}</span>
       </div>
 
       <h1>欢迎回来</h1>
-      <p class="sub">登录你的账户以继续</p>
+      <p class="sub">{{ currentFaction.motto }}</p>
+
+      <!-- 阵营选择 -->
+      <div class="faction-block">
+        <div class="faction-block__label"><span>选择你的阵营</span></div>
+        <FactionSelect v-model="faction" />
+        <p class="faction-quote">{{ currentFaction.quote }}</p>
+      </div>
 
       <div class="field">
         <svg class="icon" viewBox="0 0 24 24" fill="none">
@@ -141,9 +166,9 @@ const submit = async () => {
 /* ============ 卡片：结界式暗夜玻璃 ============ */
 .card {
   position: relative;
-  width: 380px;
+  width: 400px;
   max-width: 92vw;
-  padding: 42px 34px 32px;
+  padding: 34px 34px 28px;
   background:
     linear-gradient(160deg, rgba(38, 20, 72, 0.82), rgba(13, 7, 28, 0.92));
   border: 1px solid rgba(167, 139, 250, 0.38);
@@ -152,7 +177,7 @@ const submit = async () => {
   -webkit-backdrop-filter: blur(18px);
   box-shadow:
     0 30px 90px rgba(0, 0, 0, 0.65),
-    0 0 70px rgba(123, 47, 247, 0.22),
+    0 0 70px rgba(var(--rgb1), 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.07);
   transform-style: preserve-3d;
   transition: transform 0.15s ease-out;
@@ -195,7 +220,7 @@ const submit = async () => {
   border-top: 2px solid var(--c3);
   border-left: 2px solid var(--c3);
   border-top-left-radius: 8px;
-  filter: drop-shadow(0 0 6px rgba(56, 217, 255, 0.7));
+  filter: drop-shadow(0 0 6px var(--c3));
 }
 .corner.tr {
   top: -3px;
@@ -203,7 +228,7 @@ const submit = async () => {
   border-top: 2px solid var(--c2);
   border-right: 2px solid var(--c2);
   border-top-right-radius: 22px;
-  filter: drop-shadow(0 0 6px rgba(232, 51, 110, 0.7));
+  filter: drop-shadow(0 0 6px var(--c2));
 }
 .corner.bl {
   bottom: -3px;
@@ -211,7 +236,7 @@ const submit = async () => {
   border-bottom: 2px solid var(--c2);
   border-left: 2px solid var(--c2);
   border-bottom-left-radius: 22px;
-  filter: drop-shadow(0 0 6px rgba(232, 51, 110, 0.7));
+  filter: drop-shadow(0 0 6px var(--c2));
 }
 .corner.br {
   bottom: -3px;
@@ -219,39 +244,42 @@ const submit = async () => {
   border-bottom: 2px solid var(--c3);
   border-right: 2px solid var(--c3);
   border-bottom-right-radius: 8px;
-  filter: drop-shadow(0 0 6px rgba(56, 217, 255, 0.7));
+  filter: drop-shadow(0 0 6px var(--c3));
 }
 
 /* ============ 咒印徽章 ============ */
 .emblem {
   position: relative;
-  width: 86px;
-  height: 86px;
-  margin: 0 auto 18px;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 14px;
   display: grid;
   place-items: center;
+  transition: filter 0.4s;
 }
 .emblem-core {
   position: relative;
   z-index: 2;
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   display: grid;
   place-items: center;
-  font-size: 32px;
+  font-family: 'Songti SC', 'SimSun', serif;
+  font-size: 30px;
   font-weight: 700;
   color: #fff;
   background: linear-gradient(135deg, var(--c1), var(--c2));
   border-radius: 50%;
   box-shadow:
-    0 0 24px rgba(123, 47, 247, 0.65),
+    0 0 24px rgba(var(--rgb1), 0.65),
     inset 0 0 12px rgba(255, 255, 255, 0.25);
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.55);
+  transition: background 0.5s, box-shadow 0.5s;
 }
 .emblem-ring {
   position: absolute;
   inset: 0;
-  border: 1px dashed rgba(167, 139, 250, 0.75);
+  border: 1px dashed rgba(var(--rgb3), 0.75);
   border-radius: 50%;
   animation: spinSlow 14s linear infinite;
 }
@@ -262,7 +290,7 @@ const submit = async () => {
   border-right-color: var(--c2);
   border-radius: 50%;
   animation: spinSlow 8s linear infinite reverse;
-  filter: drop-shadow(0 0 5px rgba(123, 47, 247, 0.6));
+  filter: drop-shadow(0 0 5px var(--c1));
 }
 @keyframes spinSlow {
   to {
@@ -277,11 +305,11 @@ h1 {
   font-weight: 700;
   letter-spacing: 3px;
   margin-bottom: 6px;
-  background: linear-gradient(90deg, #ffffff 10%, #c4b5fd 50%, #f9a8c9 90%);
+  background: linear-gradient(90deg, #ffffff 10%, var(--c3) 60%, var(--c2) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 0 26px rgba(167, 139, 250, 0.35);
+  text-shadow: 0 0 26px rgba(var(--rgb3), 0.35);
 }
 .sub {
   text-align: center;
@@ -294,9 +322,41 @@ h1 {
 .sub::after {
   content: '◇';
   font-size: 9px;
-  color: rgba(167, 139, 250, 0.55);
+  color: rgba(var(--rgb3), 0.55);
   margin: 0 8px;
   vertical-align: 2px;
+}
+
+/* ============ 阵营选择 ============ */
+.faction-block { margin-bottom: 22px; }
+.faction-block__label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 11px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--muted);
+}
+.faction-block__label::before,
+.faction-block__label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line));
+}
+.faction-block__label::after { transform: scaleX(-1); }
+.faction-quote {
+  text-align: center;
+  margin-top: 10px;
+  font-family: 'Songti SC', 'SimSun', serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--c3);
+  opacity: 0.85;
+  text-shadow: 0 0 12px rgba(var(--rgb3), 0.5);
+  min-height: 16px;
 }
 
 /* ============ 输入域 ============ */
@@ -327,15 +387,15 @@ h1 {
   transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
 }
 .field input:focus {
-  border-color: rgba(167, 139, 250, 0.85);
-  background: rgba(123, 47, 247, 0.08);
+  border-color: var(--c3);
+  background: rgba(var(--rgb1), 0.08);
   box-shadow:
-    0 0 0 3px rgba(123, 47, 247, 0.22),
-    0 0 18px rgba(123, 47, 247, 0.25);
+    0 0 0 3px rgba(var(--rgb1), 0.22),
+    0 0 18px rgba(var(--rgb1), 0.28);
 }
 .field:focus-within .icon {
-  color: #c4b5fd;
-  filter: drop-shadow(0 0 5px rgba(167, 139, 250, 0.8));
+  color: var(--c3);
+  filter: drop-shadow(0 0 5px var(--c3));
 }
 .field label {
   position: absolute;
@@ -352,11 +412,11 @@ h1 {
   top: -9px;
   left: 14px;
   font-size: 12px;
-  color: #c4b5fd;
-  background: linear-gradient(180deg, #1c1038, #150a2c);
+  color: var(--c3);
+  background: linear-gradient(180deg, #171026, #100a1c);
   padding: 0 6px;
   border-radius: 4px;
-  text-shadow: 0 0 8px rgba(167, 139, 250, 0.7);
+  text-shadow: 0 0 8px rgba(var(--rgb3), 0.7);
 }
 .toggle {
   position: absolute;
@@ -416,14 +476,14 @@ h1 {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: transform 0.15s, box-shadow 0.25s;
-  box-shadow: 0 10px 26px rgba(123, 47, 247, 0.45);
+  transition: transform 0.15s, box-shadow 0.25s, background 0.5s;
+  box-shadow: 0 10px 26px rgba(var(--rgb1), 0.45);
 }
 .btn:hover {
   transform: translateY(-2px);
   box-shadow:
-    0 14px 32px rgba(232, 51, 110, 0.5),
-    0 0 24px rgba(123, 47, 247, 0.55);
+    0 14px 32px rgba(var(--rgb1), 0.55),
+    0 0 24px rgba(var(--rgb3), 0.5);
 }
 .btn:active {
   transform: translateY(0);

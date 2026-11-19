@@ -7,6 +7,7 @@ import AdminLogin from './components/AdminLogin.vue'
 import AdminPage from './components/AdminPage.vue'
 import ForumPage from './components/ForumPage.vue'
 import FriendsPage from './components/FriendsPage.vue'
+import { initFactionTheme, saveFaction } from './services/faction'
 
 // 视图状态：login = 登录/注册页，home = 首页，admin-login = 后台登录页，admin = 后台管理系统
 const view = ref('login')
@@ -36,6 +37,10 @@ const onAuthExpired = (e) => {
 
 onMounted(() => {
   window.addEventListener('auth-expired', onAuthExpired)
+
+  // 应用已保存的阵营主题，保证刷新后配色与上次选择一致
+  initFactionTheme()
+
   const arr = []
   for (let i = 0; i < 60; i++) {
     arr.push({
@@ -81,8 +86,10 @@ onMounted(() => {
 onBeforeUnmount(() => window.removeEventListener('auth-expired', onAuthExpired))
 
 // 登录成功：保存 token 与权限，并跳转首页
-const onLoginSuccess = ({ name, token, permission: perm }) => {
+const onLoginSuccess = ({ name, token, permission: perm, faction }) => {
   sessionTip.value = ''
+  // 阵营偏好在选择时已持久化，这里兜底保存一次
+  if (faction) saveFaction(faction)
   localStorage.setItem('token', token || 'demo-token')
   localStorage.setItem('user', name)
   // 仅 0 视为管理员权限，其余（含缺省）一律按默认权限处理
@@ -378,8 +385,9 @@ const onAdminLogout = () => {
   width: min(88vmin, 760px);
   height: min(88vmin, 760px);
   transform: translate(-50%, -50%);
-  color: rgba(167, 139, 250, 0.34);
-  filter: drop-shadow(0 0 18px rgba(123, 47, 247, 0.28));
+  color: rgba(var(--rgb3), 0.34);
+  filter: drop-shadow(0 0 18px rgba(var(--rgb1), 0.3));
+  transition: color 0.6s ease, filter 0.6s ease;
 }
 .domain-svg {
   width: 100%;
@@ -463,11 +471,12 @@ const onAdminLogout = () => {
   font-size: 30px;
   font-weight: 700;
   letter-spacing: 22px;
-  color: rgba(196, 181, 253, 0.4);
+  color: rgba(var(--rgb3), 0.45);
   text-shadow:
-    0 0 18px rgba(123, 47, 247, 0.55),
-    0 0 44px rgba(123, 47, 247, 0.3);
+    0 0 18px rgba(var(--rgb1), 0.6),
+    0 0 44px rgba(var(--rgb1), 0.32);
   animation: titleBreath 5s ease-in-out infinite;
+  transition: color 0.6s ease, text-shadow 0.6s ease;
 }
 .side-title.left {
   left: clamp(16px, 6vw, 90px);
@@ -478,8 +487,9 @@ const onAdminLogout = () => {
   font-family: "Segoe UI", system-ui, sans-serif;
   font-weight: 600;
   letter-spacing: 10px;
-  color: rgba(125, 211, 252, 0.35);
-  text-shadow: 0 0 16px rgba(56, 217, 255, 0.4);
+  color: rgba(var(--rgb3), 0.4);
+  text-shadow: 0 0 16px rgba(var(--rgb3), 0.45);
+  transition: color 0.6s ease, text-shadow 0.6s ease;
   text-align: center;
   line-height: 2.4;
 }
@@ -497,13 +507,18 @@ const onAdminLogout = () => {
 .login-view {
   position: relative;
   z-index: 2;
-  min-height: 100vh;
+  /* 固定视口高度 + 内部滚动：矮屏下卡片变高也能滚到登录按钮 */
+  height: 100vh;
+  height: 100dvh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 24px 12px;
 }
+/* flex 子元素用 margin:auto，内容少时垂直居中，溢出时可从顶部滚动 */
+.login-view > * { margin: auto; }
 .home-view {
   position: relative;
   z-index: 2;
@@ -527,11 +542,7 @@ const onAdminLogout = () => {
     height: 130vmin;
     opacity: 0.75;
   }
-  /* 注册卡片较高时允许滚动，避免内容被裁切 */
-  .login-view {
-    align-items: flex-start;
-    overflow-y: auto;
-  }
+  /* 注册卡片较高时允许滚动，避免内容被裁切（滚动能力已在基础样式启用） */
 }
 @media (prefers-reduced-motion: reduce) {
   .domain-svg,
